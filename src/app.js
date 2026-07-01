@@ -16,6 +16,10 @@ app.use('/api/reports', require('./routes/report'))
 app.use('/api/materials', require('./routes/material'))
 app.use('/api/consult', require('./routes/consult'))
 app.use('/api/config', require('./routes/config'))
+app.use('/api/admin', require('./routes/admin'))
+
+// 静态文件服务（运营后台）
+app.use('/admin', require('express').static('public/admin'))
 
 // 健康检查
 app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date() }))
