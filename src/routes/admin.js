@@ -33,15 +33,17 @@ router.post('/activities', async (req, res) => {
   const { title, type, start_time, end_time, location, organizer, quota, description, gradient, icon, is_online } = req.body
   try {
     await db.query('INSERT INTO activities (title,type,start_time,end_time,location,organizer,quota,description,gradient,icon,is_online,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,1)',
-      [title, type||'live', start_time||null, end_time||null, location||'', organizer||'猎豹出海', quota||0, description||'', gradient||'linear-gradient(135deg, #ff6b35, #ff9a5c)', icon||'LIVE', is_online||1])
+      [title, type||'live', start_time?.replace('T',' ').substring(0,19)||null, end_time?.replace('T',' ').substring(0,19)||null, location||'', organizer||'猎豹出海', quota||0, description||'', gradient||'linear-gradient(135deg, #ff6b35, #ff9a5c)', icon||'LIVE', is_online||1])
     res.json({ code: 0, msg: '创建成功' })
   } catch(e) { res.json({ code: 500, msg: e.message }) }
 })
 router.put('/activities/:id', async (req, res) => {
   const { title, type, start_time, location, organizer, quota, description, gradient, icon } = req.body
   try {
+    // 处理时间格式 T -> 空格
+    const fixTime = (t) => t ? t.replace('T', ' ').substring(0, 19) : null
     await db.query('UPDATE activities SET title=?,type=?,start_time=?,location=?,organizer=?,quota=?,description=?,gradient=?,icon=? WHERE id=?',
-      [title, type, start_time||null, location, organizer, quota||0, description, gradient, icon, req.params.id])
+      [title, type, fixTime(start_time), location, organizer, quota||0, description, gradient, icon, req.params.id])
     res.json({ code: 0, msg: '更新成功' })
   } catch(e) { res.json({ code: 500, msg: e.message }) }
 })
