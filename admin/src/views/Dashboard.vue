@@ -40,16 +40,15 @@ const stats = ref([
 const recentConsults = ref([])
 onMounted(async () => {
   try {
-    const [acts, reps, users, consults] = await Promise.all([
-      axios.get('/api/admin/stats/activities'),
-      axios.get('/api/admin/stats/reports'),
-      axios.get('/api/admin/stats/users'),
+    const [statsRes, consults] = await Promise.all([
+      axios.get('/api/admin/stats'),
       axios.get('/api/admin/consults?page=1&size=10')
     ])
-    stats.value[0].value = acts.data.data?.total || 0
-    stats.value[1].value = reps.data.data?.total || 0
-    stats.value[2].value = users.data.data?.total || 0
-    stats.value[3].value = consults.data.data?.total || 0
+    const d = statsRes.data.data || {}
+    stats.value[0].value = d.activities || 0
+    stats.value[1].value = d.reports || 0
+    stats.value[2].value = d.users || 0
+    stats.value[3].value = d.pending_consults || 0
     recentConsults.value = consults.data.data?.list || []
   } catch(e) { console.log(e) }
 })
