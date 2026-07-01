@@ -61,7 +61,7 @@ const form = ref({})
 const loadData = async (page = 1) => {
   loading.value = true
   try {
-    const res = await axios.get(`/api/admin/activities?page=${page}&size=20`)
+    const res = await axios.get(`/api/admin/activities?page=${page}&size=20&_t=${Date.now()}`)
     list.value = res.data.data?.list || []
     total.value = res.data.data?.total || 0
   } finally { loading.value = false }
@@ -71,7 +71,7 @@ const save = async () => {
   try {
     if (form.value.id) await axios.put(`/api/admin/activities/${form.value.id}`, form.value)
     else await axios.post('/api/admin/activities', form.value)
-    ElMessage.success('保存成功'); dialogVisible.value = false; loadData()
+    ElMessage.success('保存成功'); dialogVisible.value = false; setTimeout(() => loadData(), 300)
   } catch(e) { ElMessage.error('保存失败') }
 }
 const toggleStatus = async (row) => {
