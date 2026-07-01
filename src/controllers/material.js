@@ -1,29 +1,110 @@
 const db = require('../config/db')
 
-// 资料列表
-exports.list = async (req, res) => {
-  const { tab, page = 1, size = 20 } = req.query
-  const offset = (page - 1) * size
-  let where = 'WHERE status = 1'
-  const params = []
-  if (tab) { where += ' AND tab = ?'; params.push(tab) }
+// 资料分类列表
+exports.categories = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      `SELECT id, tab, title, cover_url, gradient, author, file_size, summary, created_at FROM materials ${where} ORDER BY sort_order DESC, id DESC LIMIT ? OFFSET ?`,
-      [...params, Number(size), offset]
-    )
+    const [rows] = await db.query('SELECT * FROM material_categories ORDER BY sort_order ASC')
     res.json({ code: 0, msg: 'success', data: rows })
   } catch (err) {
     res.json({ code: 500, msg: '获取失败', detail: err.message })
   }
 }
 
-// 资料详情
+// 资料列表（按 category_id 或 slug 筛选）
+exports.list = async (req, res) => {
+  const { category, page = 1, size = 20 } = req.query
+  const offset = (page - 1) * size
+  let where = 'WHERE m.status = 1'
+  const params = []
+
+  if (category) {
+    // 支持传 slug 或 id
+    if (isNaN(category)) {
+      where += ' AND mc.slug = ?'
+    } else {
+      where += ' AND m.category_id = ?'
+    }
+    params.push(category)
+  }
+
+  try {
+    const [rows] = await db.query(
+      `SELECT m.id, m.category_id, mc.slug AS category_slug, mc.name AS category_name,
+              m.title, m.cover_url, m.gradient, m.author, m.file_size, m.summary, m.created_at
+       FROM materials m
+       LEFT JOIN material_categories mc ON mc.id = m.category_id
+       ${where}
+       ORDER BY m.sort_order DESC, m.id DESC LIMIT ? OFFSET ?`,
+      [...params, Number(size), offset]
+    )
+    const [[{ total }]] = await db.query(
+      `SELECT COUNT(*) as total FROM materials m
+       LEFT JOIN material_categories mc ON mc.id = m.category_id ${where}`,
+      params
+    )
+    res.json({ code: 0, msg: 'success', data: { list: rows, total, page: Number(page), size: Number(size) } })
+  } catch (err) {
+    res.json({ code: 500, msg: '获取失败', detail: err.message })
+  }
+}
+
+// 资料详情（含标签 + 收藏状态）
 exports.detail = async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM materials WHERE id = ? AND status = 1', [req.params.id])
+    const [rows] = await db.query(
+      `SELECT m.*, mc.slug AS category_slug, mc.name AS category_name
+       FROM materials m
+       LEFT JOIN material_categories mc ON mc.id = m.category_id
+       WHERE m.id = ? AND m.status = 1`,
+      [req.params.id]
+    )
     if (!rows[0]) return res.json({ code: 404, msg: '资料不存在' })
-    res.json({ code: 0, msg: 'success', data: rows[0] })
+
+    const [tags] = await db.query(
+      `SELECT t.id, t.name, t.type FROM tags t
+       JOIN content_tags ct ON ct.tag_id = t.id
+       WHERE ct.content_type = 'material' AND ct.content_id = ?`,
+      [req.params.id]
+    )
+    let favorited = false
+    if (req.user) {
+      const [fav] = await db.query(
+        'SELECT id FROM user_favorites WHERE user_id=? AND target_type=? AND target_id=?',
+        [req.user.id, 'material', req.params.id]
+      )
+      favorited = !!fav[0]
+    }
+
+    res.json({ code: 0, msg: 'success', data: { ...rows[0], tags, favorited } })
+  } catch (err) {
+    res.json({ code: 500, msg: '获取失败', detail: err.message })
+  }
+}
+
+// 下载资料（需基础留资）
+exports.download = async (req, res) => {
+  const userId = req.user.id
+  const materialId = req.params.id
+  try {
+    const [users] = await db.query('SELECT level FROM users WHERE id = ?', [userId])
+    if (!users[0] || users[0].level < 2) {
+      return res.json({ code: 403, msg: 'need_basic_info', tip: '请先完善基础信息后下载' })
+    }
+    const [rows] = await db.query(
+      'SELECT file_url FROM materials WHERE id = ? AND status = 1', [materialId]
+    )
+    if (!rows[0]) return res.json({ code: 404, msg: '资料不存在' })
+
+    await db.query(
+      'INSERT INTO user_downloads (user_id, target_type, target_id) VALUES (?, ?, ?)',
+      [userId, 'material', materialId]
+    )
+    await db.query(
+      'INSERT INTO user_events (user_id, event_type, target_type, target_id) VALUES (?, ?, ?, ?)',
+      [userId, 'download', 'material', materialId]
+    ).catch(() => {})
+
+    res.json({ code: 0, msg: 'success', data: { file_url: rows[0].file_url } })
   } catch (err) {
     res.json({ code: 500, msg: '获取失败', detail: err.message })
   }

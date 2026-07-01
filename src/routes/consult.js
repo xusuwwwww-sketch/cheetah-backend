@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const ctrl = require('../controllers/consult')
-const auth = require('../middleware/auth')
+const optAuth = require('../middleware/optAuth')
 
-router.post('/', auth, ctrl.create)
+router.post('/', optAuth, ctrl.create)
 
 module.exports = router
