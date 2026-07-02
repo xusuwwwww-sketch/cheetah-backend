@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS materials (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY idx_category (category_id),
-  CONSTRAINT fk_material_category FOREIGN KEY (category_id) REFERENCES material_categories(id)
+  -- category_id FK removed: optional field
 );
 
 -- ============================================================
