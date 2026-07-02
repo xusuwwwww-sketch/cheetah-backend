@@ -167,7 +167,7 @@ const save = async () => {
 }
 
 const toggleStatus = async (row) => {
-  await axios.patch(`/api/admin/banners/${row.id}/status`, { status: row.status ? 0 : 1 })
+  await axios.patch(`/api/admin/banners/${row.id}/status`, { status: Number(row.status) ? 0 : 1 })
   ElMessage.success('操作成功'); loadData()
 }
 

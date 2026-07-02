@@ -126,7 +126,7 @@ const save = async () => {
   } catch(e) { ElMessage.error('保存失败') }
 }
 const toggleStatus = async (row) => {
-  const newStatus = row.status === 1 ? 0 : 1
+  const newStatus = Number(row.status) === 1 ? 0 : 1
   await axios.patch(`/api/admin/activities/${row.id}/status`, { status: newStatus })
   ElMessage.success('操作成功'); loadData()
 }
