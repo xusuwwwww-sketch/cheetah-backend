@@ -5,6 +5,16 @@
     </div>
     <el-table :data="list" stripe v-loading="loading">
       <el-table-column prop="id" label="ID" width="60" />
+      <el-table-column label="封面" width="100">
+        <template #default="{row}">
+          <div style="height:50px;border-radius:6px;overflow:hidden;">
+            <img v-if="row.cover_url" :src="row.cover_url" style="width:100%;height:100%;object-fit:cover" />
+            <div v-else :style="{background: row.gradient || '#ff6b35', height:'100%', display:'flex', alignItems:'center', justifyContent:'center'}">
+              <span style="font-size:10px;color:#fff">渐变色</span>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="type_slug" label="类型" width="80">
         <template #default="{row}"><el-tag size="small">{{ typeMap[row.type_slug] || row.type_slug || '-' }}</el-tag></template>
       </el-table-column>
