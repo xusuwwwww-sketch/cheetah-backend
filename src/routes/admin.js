@@ -166,6 +166,16 @@ router.patch('/banners/:id/status', async (req, res) => {
   await db.query('UPDATE banners SET status=? WHERE id=?', [req.body.status, req.params.id])
   res.json({ code: 0, msg: '操作成功' })
 })
+router.put('/banners/:id', async (req, res) => {
+  const { tag, title, description, gradient, link_type, link_id, link_url, sort_order } = req.body
+  try {
+    await db.query(
+      'UPDATE banners SET tag=?, title=?, description=?, gradient=?, link_type=?, link_id=?, link_url=?, sort_order=? WHERE id=?',
+      [tag||'', title, description||'', gradient||'', link_type||'none', link_id||null, link_url||'', sort_order||0, req.params.id]
+    )
+    res.json({ code: 0, msg: '更新成功' })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
 
 // ---- 标签管理 ----
 router.get('/tags', async (req, res) => {
