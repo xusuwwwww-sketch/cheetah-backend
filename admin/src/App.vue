@@ -27,7 +27,6 @@ const menus = [
   { path: '/users', title: '用户管理', icon: 'User' },
   { path: '/banners', title: '轮播图配置', icon: 'Picture' },
   { path: '/popups', title: '启动弹窗', icon: 'Bell' },
-  { path: '/users', title: '用户留资', icon: 'User' },
 ]
 </script>
 
