@@ -32,7 +32,9 @@ const upload = multer({
 
 router.post('/', upload.single('file'), (req, res) => {
   if (!req.file) return res.json({ code: 400, msg: '未收到文件' })
-  const url = `/uploads/${req.file.filename}`
+  const host = process.env.SERVER_HOST || req.get('host') || 'localhost:3000'
+  const protocol = req.protocol || 'http'
+  const url = `${protocol}://${host}/uploads/${req.file.filename}`
   res.json({ code: 0, msg: 'success', data: { url, filename: req.file.filename } })
 })
 

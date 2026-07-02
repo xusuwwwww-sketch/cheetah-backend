@@ -141,7 +141,7 @@ const beforeUpload = (file) => {
 const onUploadSuccess = (res) => {
   uploading.value = false
   if (res.code === 0) {
-    form.value.cover_url = 'http://localhost:3000' + res.data.url
+    form.value.cover_url = res.data.url  // 直接用后端返回的完整URL
     ElMessage.success('上传成功')
   } else {
     ElMessage.error(res.msg || '上传失败')
