@@ -7,6 +7,25 @@ require('dotenv').config()
 exports.login = async (req, res) => {
   const { code } = req.body
   if (!code) return res.json({ code: 400, msg: '缺少 code 参数' })
+
+  // 开发模式：固定测试账号（以 dev_ 开头的 code 直接走测试逻辑）
+  if (code.startsWith('dev_')) {
+    const testOpenid = 'dev_openid_test_001'
+    try {
+      const [rows] = await db.query('SELECT * FROM users WHERE openid = ?', [testOpenid])
+      let user = rows[0]
+      if (!user) {
+        const [result] = await db.query('INSERT INTO users (openid, nickname, level) VALUES (?, ?, 1)', [testOpenid, '测试用户'])
+        await db.query('INSERT INTO user_profiles (user_id) VALUES (?)', [result.insertId])
+        user = { id: result.insertId, openid: testOpenid, nickname: '测试用户', level: 1 }
+      }
+      const token = jwt.sign({ id: user.id, openid: user.openid }, process.env.JWT_SECRET || 'cheetah_secret', { expiresIn: '30d' })
+      return res.json({ code: 0, msg: 'success', data: { token, user } })
+    } catch (err) {
+      return res.json({ code: 500, msg: '测试登录失败', detail: err.message })
+    }
+  }
+
   try {
     const wxRes = await axios.get('https://api.weixin.qq.com/sns/jscode2session', {
       params: {
