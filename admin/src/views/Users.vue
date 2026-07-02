@@ -8,41 +8,21 @@
     <!-- 留资用户 -->
     <template v-if="activeTab === 'users'">
       <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0;">
-        <div style="display:flex;gap:8px">
-          <el-select v-model="levelFilter" placeholder="留资层级" clearable style="width:130px" @change="loadData(1)">
-            <el-option label="全部层级" :value="-1" />
-            <el-option label="Lv1 微信登录" :value="1" />
-            <el-option label="Lv2 基础信息" :value="2" />
-            <el-option label="Lv3 深度留资" :value="3" />
-          </el-select>
-        </div>
-        <span style="font-size:13px;color:#666">共 {{ total }} 位用户</span>
+        <span style="font-size:13px;color:#666">共 {{ total }} 条留资（含小程序登录 + 咨询提交，已去重）</span>
       </div>
       <el-table :data="list" stripe v-loading="loading">
         <el-table-column label="序号" width="60" type="index" />
-        <el-table-column label="用户" width="120">
-          <template #default="{row}">
-            <div style="display:flex;align-items:center;gap:8px">
-              <el-avatar :size="32" :src="row.avatar">{{ (row.nickname||'?').slice(0,1) }}</el-avatar>
-              <span style="font-size:13px">{{ row.nickname || '未设置' }}</span>
-            </div>
-          </template>
-        </el-table-column>
         <el-table-column prop="name" label="姓名" width="90" />
         <el-table-column prop="phone" label="手机号" width="130" />
         <el-table-column prop="company" label="公司" show-overflow-tooltip />
         <el-table-column prop="industry" label="行业" width="100" />
-        <el-table-column label="留资层级" width="110">
+        <el-table-column prop="budget_info" label="预算" width="110" show-overflow-tooltip />
+        <el-table-column label="来源" width="110">
           <template #default="{row}">
-            <el-tag :type="row.level === 3 ? 'success' : row.level === 2 ? 'primary' : 'info'" size="small">
-              {{ { 1: 'Lv1 登录', 2: 'Lv2 基础', 3: 'Lv3 深度' }[row.level] || 'Lv1' }}
-            </el-tag>
+            <el-tag :type="row.source === '小程序登录' ? 'primary' : 'warning'" size="small">{{ row.source }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="last_login_at" label="最后登录" width="150">
-          <template #default="{row}">{{ row.last_login_at?.replace('T',' ').substring(0,16) || '-' }}</template>
-        </el-table-column>
-        <el-table-column prop="created_at" label="注册时间" width="150">
+        <el-table-column prop="created_at" label="时间" width="150">
           <template #default="{row}">{{ row.created_at?.replace('T',' ').substring(0,16) }}</template>
         </el-table-column>
       </el-table>
@@ -131,11 +111,43 @@ const loadData = async (page = currentPage.value) => {
   loading.value = true
   try {
     if (activeTab.value === 'users') {
-      let url = `/api/admin/users?page=${page}&size=20`
-      if (levelFilter.value > 0) url += `&level=${levelFilter.value}`
-      const res = await axios.get(url)
-      list.value = res.data.data?.list || []
-      total.value = res.data.data?.total || 0
+      // 合并小程序登录用户 + 咨询提交用户
+      const [r1, r2] = await Promise.all([
+        axios.get(`/api/admin/users?page=1&size=200`),
+        axios.get(`/api/admin/consults?page=1&size=200`)
+      ])
+      // 小程序登录用户
+      const loginUsers = (r1.data.data?.list || []).map(u => ({
+        _id: `u_${u.id}`,
+        name: u.name || u.nickname || '-',
+        phone: u.phone || '-',
+        company: u.company || '-',
+        industry: u.industry || '-',
+        source: '小程序登录',
+        level_tag: u.level,
+        created_at: u.created_at,
+        _raw: u
+      }))
+      // 咨询提交用户
+      const consultUsers = (r2.data.data?.list || r2.data.data || []).map(c => ({
+        _id: `c_${c.id}`,
+        name: c.name || '-',
+        phone: c.phone || '-',
+        company: c.company || '-',
+        industry: c.industry || '-',
+        source: '约咨询表单',
+        level_tag: null,
+        budget_info: c.budget_info,
+        core_need: c.core_need,
+        created_at: c.created_at,
+        _raw: c
+      }))
+      // 合并去重（同手机号优先保留小程序登录）
+      const phoneSet = new Set(loginUsers.filter(u => u.phone !== '-').map(u => u.phone))
+      const dedupedConsult = consultUsers.filter(c => !phoneSet.has(c.phone))
+      const merged = [...loginUsers, ...dedupedConsult].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      list.value = merged
+      total.value = merged.length
     } else {
       let url = `/api/admin/consults?page=${page}&size=20`
       if (statusFilter.value >= 0) url += `&status=${statusFilter.value}`
