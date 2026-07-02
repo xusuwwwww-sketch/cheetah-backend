@@ -10,7 +10,7 @@
       </el-table-column>
       <el-table-column prop="title" label="标题" />
       <el-table-column prop="start_time" label="开始时间" width="160">
-        <template #default="{row}">{{ row.start_time?.substring(0,16) }}</template>
+        <template #default="{row}">{{ row.start_time?.replace('T',' ').substring(0,16) }}</template>
       </el-table-column>
       <el-table-column prop="location" label="地点" width="120" />
       <el-table-column label="报名/限额" width="90">
