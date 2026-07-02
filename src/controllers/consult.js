@@ -2,21 +2,29 @@ const db = require('../config/db')
 
 // 提交预约咨询
 exports.create = async (req, res) => {
-  const { name, phone, company, topic, note, scheduled_at } = req.body
-  if (!name || !phone) return res.json({ code: 400, msg: '姓名和手机号为必填项' })
-  // 手机号简单校验
-  if (!/^1[3-9]\d{9}$/.test(phone) && !/^\+?\d{7,15}$/.test(phone)) {
-    return res.json({ code: 400, msg: '手机号格式不正确' })
-  }
+  const { name, industry, position, company, budget_info, core_need, pain_point, phone, topic, note, scheduled_at } = req.body
+  
+  // 必填校验
+  if (!name) return res.json({ code: 400, msg: '姓名为必填项' })
+  if (!industry) return res.json({ code: 400, msg: '行业为必填项' })
+  if (!company) return res.json({ code: 400, msg: '公司名称为必填项' })
+  if (!budget_info) return res.json({ code: 400, msg: '推广预算为必填项' })
+  if (!core_need) return res.json({ code: 400, msg: '核心需求为必填项' })
+
   try {
     await db.query(
-      `INSERT INTO consults (user_id, name, phone, company, topic, note, scheduled_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO consults (user_id, name, industry, position, company, budget_info, core_need, pain_point, phone, topic, note, scheduled_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         req.user?.id || null,
         name,
-        phone,
-        company || null,
+        industry,
+        position || null,
+        company,
+        budget_info,
+        core_need,
+        pain_point || null,
+        phone || null,
         topic || null,
         note || null,
         scheduled_at || null
