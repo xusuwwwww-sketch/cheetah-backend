@@ -49,6 +49,22 @@
             <el-option v-for="(v,k) in typeMap" :key="k" :label="v" :value="k" />
           </el-select>
         </el-form-item>
+        <el-form-item label="封面图">
+          <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+            <el-upload action="/api/upload" :show-file-list="false" accept="image/*" :on-success="onUploadSuccess" :on-error="onUploadError" :before-upload="() => { uploading = true; return true }">
+              <el-button :loading="uploading" size="small">{{ uploading ? '上传中...' : '点击上传图片' }}</el-button>
+            </el-upload>
+            <div v-if="form.cover_url" style="position:relative;display:inline-block">
+              <img :src="form.cover_url" style="height:80px;border-radius:6px;object-fit:cover;max-width:300px" />
+              <el-button size="small" type="danger" circle style="position:absolute;top:-8px;right:-8px;padding:4px" @click="form.cover_url = ''">✕</el-button>
+            </div>
+            <el-input v-model="form.cover_url" placeholder="或直接填入图片URL" size="small" />
+          </div>
+        </el-form-item>
+        <el-form-item label="渐变色（无图时用）">
+          <el-input v-model="form.gradient" placeholder="linear-gradient(...)" />
+          <div v-if="!form.cover_url && form.gradient" :style="{background: form.gradient, height:'32px', borderRadius:'6px', marginTop:'6px'}"></div>
+        </el-form-item>
         <el-form-item label="开始时间"><el-date-picker v-model="form.start_time" type="datetime" format="YYYY-MM-DD HH:mm" /></el-form-item>
         <el-form-item label="结束时间"><el-date-picker v-model="form.end_time" type="datetime" format="YYYY-MM-DD HH:mm" /></el-form-item>
         <el-form-item label="报名截止"><el-date-picker v-model="form.signup_deadline" type="datetime" format="YYYY-MM-DD HH:mm" /></el-form-item>
@@ -56,7 +72,6 @@
         <el-form-item label="限额"><el-input-number v-model="form.quota" :min="0" placeholder="0=不限" /></el-form-item>
         <el-form-item label="主办方"><el-input v-model="form.organizer" /></el-form-item>
         <el-form-item label="详情"><el-input v-model="form.description" type="textarea" :rows="4" /></el-form-item>
-        <el-form-item label="渐变色"><el-input v-model="form.gradient" placeholder="linear-gradient(...)" /></el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible=false">取消</el-button>
@@ -69,7 +84,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-const list = ref([]), total = ref(0), loading = ref(false), dialogVisible = ref(false)
+const list = ref([]), total = ref(0), loading = ref(false), dialogVisible = ref(false), uploading = ref(false)
 const currentPage = ref(1)
 const typeMap = { live: '直播', salon: '沙龙', closed: '闭门会', camp: '训练营' }
 const statusMap = { 0: '下架', 1: '报名中', 2: '已结束' }
@@ -103,7 +118,13 @@ const save = async () => {
 const toggleStatus = async (row) => {
   const newStatus = row.status === 1 ? 0 : 1
   await axios.patch(`/api/admin/activities/${row.id}/status`, { status: newStatus })
-  ElMessage.success('操作成功'); loadData()  // 保持当前页
+  ElMessage.success('操作成功'); loadData()
 }
+const onUploadSuccess = (res) => {
+  uploading.value = false
+  if (res.code === 0) { form.value.cover_url = res.data.url; ElMessage.success('上传成功') }
+  else ElMessage.error(res.msg || '上传失败')
+}
+const onUploadError = () => { uploading.value = false; ElMessage.error('上传失败') }
 onMounted(() => loadData())
 </script>
