@@ -316,3 +316,24 @@ INSERT INTO communities (title, description, icon_color, sort_order) VALUES
 ('电商出海群', '1032人已加入', '#ecfdf5', 3),
 ('游戏出海群', '643人已加入',  '#f5f3ff', 4),
 ('合规交流群', '421人已加入',  '#fffbeb', 5);
+
+-- ============================================================
+-- 启动弹窗表
+-- ============================================================
+CREATE TABLE IF NOT EXISTS popups (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(128) NOT NULL COMMENT '弹窗标题',
+  cover_url VARCHAR(500) COMMENT '封面图URL',
+  gradient VARCHAR(200) DEFAULT 'linear-gradient(135deg, #ff6b35, #ff9a5c)' COMMENT '无图时的渐变色',
+  description TEXT COMMENT '描述文字',
+  btn_text VARCHAR(32) DEFAULT '立即查看' COMMENT '按钮文字',
+  link_type VARCHAR(32) DEFAULT 'none' COMMENT 'activity/report/material/case/url/none',
+  link_id INT COMMENT '关联ID',
+  link_url VARCHAR(500) COMMENT '外部链接',
+  show_once TINYINT DEFAULT 1 COMMENT '1=今日内不再提醒 0=每次都弹',
+  status TINYINT DEFAULT 1 COMMENT '0=关闭 1=启用',
+  sort_order INT DEFAULT 0,
+  start_time DATETIME COMMENT '展示开始时间（NULL=立即）',
+  end_time DATETIME COMMENT '展示结束时间（NULL=永久）',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

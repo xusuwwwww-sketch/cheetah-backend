@@ -241,3 +241,36 @@ router.patch('/community-joins/:id', async (req, res) => {
 })
 
 module.exports = router
+
+// ---- 弹窗管理 ----
+router.get('/popups', async (req, res) => {
+  try {
+    const [list] = await db.query('SELECT * FROM popups ORDER BY sort_order DESC, id DESC')
+    res.json({ code: 0, data: list })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
+router.post('/popups', async (req, res) => {
+  const { title, cover_url, gradient, description, btn_text, link_type, link_id, link_url, show_once, sort_order, start_time, end_time } = req.body
+  if (!title) return res.json({ code: 400, msg: '标题必填' })
+  try {
+    await db.query(
+      'INSERT INTO popups (title, cover_url, gradient, description, btn_text, link_type, link_id, link_url, show_once, sort_order, start_time, end_time, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1)',
+      [title, cover_url||null, gradient||'', description||'', btn_text||'立即查看', link_type||'none', link_id||null, link_url||'', show_once??1, sort_order||0, start_time||null, end_time||null]
+    )
+    res.json({ code: 0, msg: '创建成功' })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
+router.put('/popups/:id', async (req, res) => {
+  const { title, cover_url, gradient, description, btn_text, link_type, link_id, link_url, show_once, sort_order, start_time, end_time } = req.body
+  try {
+    await db.query(
+      'UPDATE popups SET title=?, cover_url=?, gradient=?, description=?, btn_text=?, link_type=?, link_id=?, link_url=?, show_once=?, sort_order=?, start_time=?, end_time=? WHERE id=?',
+      [title, cover_url||null, gradient||'', description||'', btn_text||'立即查看', link_type||'none', link_id||null, link_url||'', show_once??1, sort_order||0, start_time||null, end_time||null, req.params.id]
+    )
+    res.json({ code: 0, msg: '更新成功' })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
+router.patch('/popups/:id/status', async (req, res) => {
+  await db.query('UPDATE popups SET status=? WHERE id=?', [req.body.status, req.params.id])
+  res.json({ code: 0, msg: '操作成功' })
+})

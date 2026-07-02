@@ -26,6 +26,7 @@ const menus = [
   { path: '/contents', title: '内容管理', icon: 'Files' },
   { path: '/consults', title: '咨询预约', icon: 'ChatDotRound' },
   { path: '/banners', title: '轮播图配置', icon: 'Picture' },
+  { path: '/popups', title: '启动弹窗', icon: 'Bell' },
   { path: '/users', title: '用户留资', icon: 'User' },
 ]
 </script>

@@ -7,6 +7,7 @@ const routes = [
   { path: '/contents', component: () => import('../views/Contents.vue'), meta: { title: '内容管理' } },
   { path: '/consults', component: () => import('../views/Consults.vue'), meta: { title: '咨询预约' } },
   { path: '/banners', component: () => import('../views/Banners.vue'), meta: { title: '轮播图配置' } },
+  { path: '/popups', component: () => import('../views/Popups.vue'), meta: { title: '启动弹窗' } },
   { path: '/users', component: () => import('../views/Users.vue'), meta: { title: '用户留资' } },
 ]
 
