@@ -159,7 +159,18 @@ router.patch('/materials/:id/status', async (req, res) => {
 })
 
 // ---- 咨询管理 ----
-router.get('/consults', listQuery('consults'))
+router.get('/consults', async (req, res) => {
+  const { page = 1, size = 20, status } = req.query
+  const offset = (page - 1) * size
+  let where = ''
+  const params = []
+  if (status !== undefined && status !== '') { where = 'WHERE status = ?'; params.push(Number(status)) }
+  try {
+    const [list] = await db.query(`SELECT * FROM consults ${where} ORDER BY id DESC LIMIT ? OFFSET ?`, [...params, Number(size), offset])
+    const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM consults ${where}`, params)
+    res.json({ code: 0, data: { list, total } })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
 router.patch('/consults/:id', async (req, res) => {
   const { status, advisor_id, follow_up_note } = req.body
   try {
