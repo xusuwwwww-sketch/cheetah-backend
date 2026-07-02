@@ -6,7 +6,7 @@
     <el-table :data="list" stripe v-loading="loading">
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="type_slug" label="类型" width="80">
-        <template #default="{row}"><el-tag size="small">{{ typeMap[row.type_slug] || row.type_slug }}</el-tag></template>
+        <template #default="{row}"><el-tag size="small">{{ typeMap[row.type_slug] || row.type_slug || '-' }}</el-tag></template>
       </el-table-column>
       <el-table-column prop="title" label="标题" />
       <el-table-column prop="start_time" label="开始时间" width="160">
@@ -19,7 +19,7 @@
       <el-table-column label="状态" width="80">
         <template #default="{row}">
           <el-tag :type="row.status === 1 ? 'success' : row.status === 2 ? 'info' : 'warning'" size="small">
-            {{ statusMap[row.status] || '未知' }}
+            {{ statusMap[row.status] ?? '未知' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -32,7 +32,14 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination style="margin-top:16px" :total="total" :page-size="20" @current-change="loadData" layout="total, prev, pager, next" />
+    <el-pagination
+      style="margin-top:16px"
+      :total="total"
+      :page-size="20"
+      :current-page="currentPage"
+      @current-change="onPageChange"
+      layout="total, prev, pager, next"
+    />
 
     <el-dialog v-model="dialogVisible" :title="form.id ? '编辑活动' : '新增活动'" width="620px">
       <el-form :model="form" label-width="90px">
@@ -63,10 +70,12 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 const list = ref([]), total = ref(0), loading = ref(false), dialogVisible = ref(false)
+const currentPage = ref(1)
 const typeMap = { live: '直播', salon: '沙龙', closed: '闭门会', camp: '训练营' }
 const statusMap = { 0: '下架', 1: '报名中', 2: '已结束' }
 const form = ref({})
-const loadData = async (page = 1) => {
+
+const loadData = async (page = currentPage.value) => {
   loading.value = true
   try {
     const res = await axios.get(`/api/admin/activities?page=${page}&size=20`)
@@ -74,6 +83,12 @@ const loadData = async (page = 1) => {
     total.value = res.data.data?.total || 0
   } finally { loading.value = false }
 }
+
+const onPageChange = (page) => {
+  currentPage.value = page
+  loadData(page)
+}
+
 const openDialog = (row = {}) => {
   form.value = { ...row, type_slug: row.type_slug || 'live', quota: row.quota || 0 }
   dialogVisible.value = true
@@ -88,7 +103,7 @@ const save = async () => {
 const toggleStatus = async (row) => {
   const newStatus = row.status === 1 ? 0 : 1
   await axios.patch(`/api/admin/activities/${row.id}/status`, { status: newStatus })
-  ElMessage.success('操作成功'); loadData()
+  ElMessage.success('操作成功'); loadData()  // 保持当前页
 }
 onMounted(() => loadData())
 </script>
