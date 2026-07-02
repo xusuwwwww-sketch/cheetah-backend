@@ -141,7 +141,36 @@ exports.getFavorites = async (req, res) => {
        ${where} ORDER BY f.id DESC LIMIT ? OFFSET ?`,
       [...params, Number(size), offset]
     )
-    res.json({ code: 0, msg: 'success', data: rows })
+
+    // 批量查询标题（减少 N+1）
+    const reportIds = rows.filter(r => r.target_type === 'report').map(r => r.target_id)
+    const materialIds = rows.filter(r => r.target_type !== 'report' && r.target_type !== 'activity').map(r => r.target_id)
+    const activityIds = rows.filter(r => r.target_type === 'activity').map(r => r.target_id)
+
+    const titleMap = {}
+    const gradientMap = {}
+
+    if (reportIds.length) {
+      const [rs] = await db.query(`SELECT id, title, gradient FROM reports WHERE id IN (${reportIds.map(() => '?').join(',')})`, reportIds)
+      rs.forEach(r => { titleMap[`report_${r.id}`] = r.title; gradientMap[`report_${r.id}`] = r.gradient })
+    }
+    if (materialIds.length) {
+      const [ms] = await db.query(`SELECT id, title, gradient FROM materials WHERE id IN (${materialIds.map(() => '?').join(',')})`, materialIds)
+      ms.forEach(m => { titleMap[`${m.type || 'material'}_${m.id}`] = m.title; gradientMap[`material_${m.id}`] = m.gradient })
+      ms.forEach(m => { titleMap[`case_${m.id}`] = m.title; titleMap[`material_${m.id}`] = m.title })
+    }
+    if (activityIds.length) {
+      const [as] = await db.query(`SELECT id, title, gradient FROM activities WHERE id IN (${activityIds.map(() => '?').join(',')})`, activityIds)
+      as.forEach(a => { titleMap[`activity_${a.id}`] = a.title; gradientMap[`activity_${a.id}`] = a.gradient })
+    }
+
+    const data = rows.map(r => ({
+      ...r,
+      title: titleMap[`${r.target_type}_${r.target_id}`] || `内容 #${r.target_id}`,
+      gradient: gradientMap[`${r.target_type}_${r.target_id}`] || null
+    }))
+
+    res.json({ code: 0, msg: 'success', data })
   } catch (err) {
     res.json({ code: 500, msg: '获取失败', detail: err.message })
   }
