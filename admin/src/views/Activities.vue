@@ -26,6 +26,9 @@
       <el-table-column label="报名/限额" width="90">
         <template #default="{row}">{{ row.signup_count ?? '-' }}/{{ row.quota || '不限' }}</template>
       </el-table-column>
+      <el-table-column label="收藏" width="65">
+        <template #default="{row}"><span style="color:#ef4444;font-weight:600">♥ {{ row.fav_count || 0 }}</span></template>
+      </el-table-column>
       <el-table-column label="状态" width="80">
         <template #default="{row}">
           <el-tag :type="row.status === 1 ? 'success' : row.status === 2 ? 'info' : 'warning'" size="small">

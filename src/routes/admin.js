@@ -58,7 +58,23 @@ router.get('/users', async (req, res) => {
 })
 
 // ---- 活动 CRUD ----
-router.get('/activities', listQuery('activities'))
+router.get('/activities', async (req, res) => {
+  const { page = 1, size = 20, keyword } = req.query
+  const offset = (page - 1) * size
+  let where = keyword ? 'WHERE a.title LIKE ?' : ''
+  const params = keyword ? [`%${keyword}%`] : []
+  try {
+    const [list] = await db.query(
+      `SELECT a.*,
+        (SELECT COUNT(*) FROM activity_signups s WHERE s.activity_id=a.id AND s.status=1) AS signup_count,
+        (SELECT COUNT(*) FROM user_favorites f WHERE f.target_type='activity' AND f.target_id=a.id) AS fav_count
+       FROM activities a ${where} ORDER BY a.id DESC LIMIT ? OFFSET ?`,
+      [...params, Number(size), offset]
+    )
+    const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM activities a ${where}`, params)
+    res.json({ code: 0, data: { list, total } })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
 router.post('/activities', async (req, res) => {
   const { title, type_slug, start_time, end_time, signup_deadline, location, organizer, quota, description, gradient, is_online } = req.body
   if (!title) return res.json({ code: 400, msg: '标题必填' })
