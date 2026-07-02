@@ -119,17 +119,38 @@ router.patch('/reports/:id/status', async (req, res) => {
 })
 
 // ---- 资料 CRUD ----
-router.get('/materials', listQuery('materials'))
+router.get('/materials', async (req, res) => {
+  const { content_type, page = 1, size = 20 } = req.query
+  const offset = (page - 1) * size
+  let where = ''
+  const params = []
+  if (content_type) { where = 'WHERE content_type = ?'; params.push(content_type) }
+  try {
+    const [list] = await db.query(`SELECT * FROM materials ${where} ORDER BY id DESC LIMIT ? OFFSET ?`, [...params, Number(size), offset])
+    const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM materials ${where}`, params)
+    res.json({ code: 0, data: { list, total } })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
 router.post('/materials', async (req, res) => {
-  const { category_id, title, author, file_size, file_url, summary, content, gradient } = req.body
-  if (!title || !category_id) return res.json({ code: 400, msg: '标题和分类必填' })
+  const { content_type, title, author, file_size, file_url, cover_url, summary, content, gradient, sort_order } = req.body
+  if (!title) return res.json({ code: 400, msg: '标题必填' })
   try {
     await db.query(
-      `INSERT INTO materials (category_id, title, author, file_size, file_url, summary, content, gradient, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)`,
-      [category_id, title, author || '', file_size || '', file_url || '', summary || '', content || '', gradient || '']
+      `INSERT INTO materials (content_type, title, author, file_size, file_url, cover_url, summary, content, gradient, sort_order, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+      [content_type || 'material', title, author || '', file_size || '', file_url || '', cover_url || null, summary || '', content || '', gradient || '', sort_order || 0]
     )
     res.json({ code: 0, msg: '创建成功' })
+  } catch (e) { res.json({ code: 500, msg: e.message }) }
+})
+router.put('/materials/:id', async (req, res) => {
+  const { content_type, title, author, file_size, file_url, cover_url, summary, content, gradient, sort_order } = req.body
+  try {
+    await db.query(
+      `UPDATE materials SET content_type=?, title=?, author=?, file_size=?, file_url=?, cover_url=?, summary=?, content=?, gradient=?, sort_order=? WHERE id=?`,
+      [content_type || 'material', title, author || '', file_size || '', file_url || '', cover_url || null, summary || '', content || '', gradient || '', sort_order || 0, req.params.id]
+    )
+    res.json({ code: 0, msg: '更新成功' })
   } catch (e) { res.json({ code: 500, msg: e.message }) }
 })
 router.patch('/materials/:id/status', async (req, res) => {

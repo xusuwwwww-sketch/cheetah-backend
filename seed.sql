@@ -23,17 +23,58 @@ INSERT INTO reports (title, gradient, source, industry, region, year, is_free, p
 
 -- 资料测试数据（用 category_id，对应 material_categories 的 id）
 -- media=1, lobster=2, fastgrow=3
-INSERT INTO materials (category_id, title, gradient, author, file_size, summary, status, sort_order) VALUES
-(1, '2026年海外媒体投放渠道指南', 'linear-gradient(135deg, #8b5cf6, #a78bfa)', 'CheetahGo 投放团队', 'PDF · 2.3MB', '覆盖 Meta、Google、TikTok、Twitter 等主流平台的投放策略、受众定向和预算分配指南。', 1, 10),
-(1, 'Google Ads 最佳实践手册 2026', 'linear-gradient(135deg, #6366f1, #818cf8)', 'CheetahGo 投放团队', 'PDF · 4.1MB', '从账户结构到关键词策略，从出价优化到广告素材创作，全面覆盖 Google Ads 核心操作技巧。', 1, 9),
-(1, 'Meta 广告政策合规速查手册', 'linear-gradient(135deg, #7c3aed, #a78bfa)', 'CheetahGo 合规团队', 'PDF · 1.8MB', '汇总 Meta 广告政策中的高频违规场景和解决方案，帮助广告主避免账号封禁风险。', 1, 8),
-(1, 'WhatsApp Business API 接入指南', 'linear-gradient(135deg, #25d366, #128c7e)', 'CheetahGo 技术团队', 'PDF · 3.5MB', '完整介绍 WhatsApp BSP 接入流程、API 使用方法和常见问题解决方案。', 1, 7),
-(2, '龙虾投放平台入门指南', 'linear-gradient(135deg, #ef4444, #f87171)', '龙虾产品团队', 'PDF · 3.2MB', '从账号注册到第一个广告活动，手把手带你快速上手龙虾投放平台的核心功能。', 1, 10),
-(2, '龙虾自动化规则配置手册', 'linear-gradient(135deg, #f97316, #fb923c)', '龙虾产品团队', 'PDF · 2.6MB', '详解龙虾平台自动化规则的设置方法，实现广告的智能监控和自动优化。', 1, 9),
-(2, '龙虾 AI 素材生成使用指南', 'linear-gradient(135deg, #dc2626, #ef4444)', '龙虾产品团队', 'PDF · 2.1MB', '介绍龙虾平台 AI 素材生成功能，批量生成多语言广告素材，提升创意效率。', 1, 8),
-(3, 'FastGrow 素材测试工作流', 'linear-gradient(135deg, #06b6d4, #22d3ee)', 'FastGrow 产品团队', 'PDF · 2.9MB', '系统介绍如何利用 FastGrow 平台进行高效的广告素材 A/B 测试，快速找到高转化素材。', 1, 10),
-(3, 'FastGrow 数据看板使用手册', 'linear-gradient(135deg, #0f766e, #14b8a6)', 'FastGrow 产品团队', 'PDF · 3.7MB', '全面介绍 FastGrow 数据分析功能，帮助您从数据中挖掘投放洞察，提升 ROI。', 1, 9),
-(3, 'FastGrow AI 视频广告制作教程', 'linear-gradient(135deg, #0284c7, #38bdf8)', 'FastGrow 产品团队', 'PDF · 4.2MB', '从脚本撰写到视频生成，完整介绍 FastGrow AI 视频广告制作全流程。', 1, 8);
+-- 资料库数据（资料下载）
+INSERT INTO materials (content_type, title, gradient, author, file_size, summary, status, sort_order) VALUES
+('material', '2026年海外媒体投放渠道指南', 'linear-gradient(135deg, #8b5cf6, #a78bfa)', 'CheetahGo 投放团队', 'PDF · 2.3MB', '覆盖 Meta、Google、TikTok、Twitter 等主流平台的投放策略、受众定向和预算分配指南。', 1, 10),
+('material', 'Google Ads 最佳实践手册 2026', 'linear-gradient(135deg, #6366f1, #818cf8)', 'CheetahGo 投放团队', 'PDF · 4.1MB', '从账户结构到关键词策略，从出价优化到广告素材创作，全面覆盖 Google Ads 核心操作技巧。', 1, 9),
+('material', 'Meta 广告政策合规速查手册', 'linear-gradient(135deg, #7c3aed, #a78bfa)', 'CheetahGo 合规团队', 'PDF · 1.8MB', '汇总 Meta 广告政策中的高频违规场景和解决方案，帮助广告主避免账号封禁风险。', 1, 8),
+('material', 'WhatsApp Business API 接入指南', 'linear-gradient(135deg, #25d366, #128c7e)', 'CheetahGo 技术团队', 'PDF · 3.5MB', '完整介绍 WhatsApp BSP 接入流程、API 使用方法和常见问题解决方案。', 1, 7),
+('material', 'TikTok Shop 运营全攻略', 'linear-gradient(135deg, #000000, #333366)', 'CheetahGo 电商团队', 'PDF · 5.1MB', '从店铺搭建到爆款打造，TikTok Shop 运营完整指南。', 1, 6);
+
+-- 案例库数据（图文展示）
+INSERT INTO materials (content_type, title, gradient, author, summary, content, status, sort_order) VALUES
+('case', '某跨境电商品牌TikTok出海增长案例', 'linear-gradient(135deg, #059669, #34d399)', '猎豹研究院', '通过 TikTok Shop + 达人合作，3个月内 GMV 增长 320%，ROI 提升至 4.2。', '案例背景：某家居品牌计划进入东南亚市场...
+
+核心策略：
+1. 本地化内容生产，覆盖印尼、泰国、越南三国语言
+2. 与头部达人合作，借助达人粉丝基础快速起量
+3. TikTok Shop 直播带货，平均每场 GMV 超 5 万元
+
+核心数据：
+- 月 GMV：从 0 增长至 80 万元
+- ROI：4.2
+- 粉丝增长：12 万
+
+复盘总结：本土化内容是东南亚出海最关键的一步。', 1, 10),
+('case', 'SaaS 工具出海：Google Ads 精细化投放实战', 'linear-gradient(135deg, #2563eb, #60a5fa)', 'CheetahGo 投放团队', '通过账户结构优化+受众分层，CPA 降低 47%，MQL 提升 2.3 倍。', '项目背景：某 B2B SaaS 工具希望进入北美市场...
+
+核心挑战：
+- 北美 Google Ads CPC 均价高，预算有限
+- 产品试用转化率低，漏斗需要优化
+
+解决方案：
+1. 账户结构重组：按产品功能拆分广告系列
+2. 受众分层：区分品牌词/竞品词/通用词出价策略
+3. 落地页 A/B 测：测试 6 个版本，找到最优转化页
+
+结果：
+- CPA 降低 47%
+- 试用注册率提升 68%
+- MQL 数量增长 2.3 倍', 1, 9),
+('case', '独立站冷启动：如何在 3 个月内突破百万美金', 'linear-gradient(135deg, #d97706, #fbbf24)', '猎豹出海顾问团队', '0 资源起步，通过精准选品+社媒矩阵+红人营销，3 个月独立站 GMV 破百万美金。', '案例主角：服装配饰垂直品牌
+
+起盘策略：
+1. 选品：聚焦小众细分赛道，避开红海竞争
+2. 内容：Instagram + Pinterest 双平台矩阵铺量
+3. KOL：与 50 个腰部网红合作，CPS 模式控制成本
+4. 数据：每周复盘 Top/Bottom SKU，快速迭代
+
+月度数据：
+- 第1月：$3.2万
+- 第2月：$18.6万
+- 第3月：$112万
+
+关键经验：选品比投放更重要，找到 Product-Market Fit 才是核心。', 1, 8);
 
 -- 标签测试数据
 INSERT INTO tags (name, type, sort_order) VALUES

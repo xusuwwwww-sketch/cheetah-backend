@@ -144,7 +144,8 @@ CREATE TABLE IF NOT EXISTS reports (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS materials (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  category_id INT NOT NULL COMMENT '关联 material_categories.id',
+  content_type VARCHAR(20) DEFAULT 'material' COMMENT 'report=报告 / case=案例库 / material=资料库',
+  category_id INT COMMENT '分类ID（可选）',
   title VARCHAR(255) NOT NULL,
   cover_url VARCHAR(500),
   gradient VARCHAR(200) DEFAULT 'linear-gradient(135deg, #8b5cf6, #a78bfa)',

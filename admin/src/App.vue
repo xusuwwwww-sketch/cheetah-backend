@@ -23,8 +23,7 @@
 const menus = [
   { path: '/dashboard', title: '数据概览', icon: 'DataLine' },
   { path: '/activities', title: '活动管理', icon: 'Calendar' },
-  { path: '/reports', title: '报告管理', icon: 'Document' },
-  { path: '/materials', title: '资料管理', icon: 'Folder' },
+  { path: '/contents', title: '内容管理', icon: 'Files' },
   { path: '/consults', title: '咨询预约', icon: 'ChatDotRound' },
   { path: '/banners', title: '轮播图配置', icon: 'Picture' },
   { path: '/users', title: '用户留资', icon: 'User' },
