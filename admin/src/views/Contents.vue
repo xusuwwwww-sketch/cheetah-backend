@@ -13,7 +13,7 @@
     </div>
 
     <el-table :data="list" stripe v-loading="loading">
-      <el-table-column prop="id" label="ID" width="60" />
+      <el-table-column label="序号" width="60" type="index" :index="(i) => (currentPage - 1) * 20 + i + 1" />
       <el-table-column label="封面" width="100">
         <template #default="{row}">
           <div style="height:50px;border-radius:6px;overflow:hidden;">

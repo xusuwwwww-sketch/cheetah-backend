@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-table :data="list" stripe v-loading="loading">
-      <el-table-column prop="id" label="ID" width="60" />
+      <el-table-column label="序号" width="60" type="index" />
       <el-table-column prop="title" label="标题" v-if="hasField('title')" />
       <el-table-column prop="name" label="姓名" width="100" v-if="hasField('name')" />
       <el-table-column prop="phone" label="电话" width="130" v-if="hasField('phone')" />

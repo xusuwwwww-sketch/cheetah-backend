@@ -6,7 +6,7 @@
     </div>
 
     <el-table :data="list" stripe v-loading="loading">
-      <el-table-column prop="id" label="ID" width="60" />
+      <el-table-column label="序号" width="60" type="index" />
       <el-table-column label="预览" width="140">
         <template #default="{row}">
           <div style="border-radius:6px;overflow:hidden;height:50px;">
