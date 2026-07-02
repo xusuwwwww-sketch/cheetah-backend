@@ -191,6 +191,7 @@ CREATE TABLE IF NOT EXISTS banners (
   title VARCHAR(128) NOT NULL,
   description VARCHAR(255),
   gradient VARCHAR(200) DEFAULT 'linear-gradient(135deg, #ff6b35, #ff9a5c)',
+  cover_url VARCHAR(500) COMMENT '封面图URL（优先于渐变色）',
   link_type VARCHAR(32) DEFAULT 'none' COMMENT 'activity/report/material/url/none',
   link_id INT COMMENT '关联 ID',
   link_url VARCHAR(500) COMMENT '外链',

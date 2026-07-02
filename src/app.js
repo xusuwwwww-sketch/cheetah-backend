@@ -21,6 +21,10 @@ app.use('/api/materials', require('./routes/material'))
 app.use('/api/consult', require('./routes/consult'))
 app.use('/api/config', require('./routes/config'))
 app.use('/api/admin', require('./routes/admin'))
+app.use('/api/upload', require('./routes/upload'))
+
+// 静态文件：上传的图片
+app.use('/uploads', require('express').static('public/uploads'))
 
 // 静态文件服务（运营后台）
 app.use('/admin', require('express').static('public/admin'))

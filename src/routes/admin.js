@@ -153,11 +153,11 @@ router.patch('/consults/:id', async (req, res) => {
 // ---- 轮播图 CRUD ----
 router.get('/banners', listQuery('banners'))
 router.post('/banners', async (req, res) => {
-  const { tag, title, description, gradient, link_type, link_id, link_url } = req.body
+  const { tag, title, description, gradient, cover_url, link_type, link_id, link_url } = req.body
   try {
     await db.query(
-      'INSERT INTO banners (tag, title, description, gradient, link_type, link_id, link_url, status) VALUES (?,?,?,?,?,?,?,1)',
-      [tag || '', title, description || '', gradient || '', link_type || 'none', link_id || null, link_url || '']
+      'INSERT INTO banners (tag, title, description, gradient, cover_url, link_type, link_id, link_url, status) VALUES (?,?,?,?,?,?,?,?,1)',
+      [tag || '', title, description || '', gradient || '', cover_url || null, link_type || 'none', link_id || null, link_url || '']
     )
     res.json({ code: 0, msg: '创建成功' })
   } catch (e) { res.json({ code: 500, msg: e.message }) }
@@ -167,11 +167,11 @@ router.patch('/banners/:id/status', async (req, res) => {
   res.json({ code: 0, msg: '操作成功' })
 })
 router.put('/banners/:id', async (req, res) => {
-  const { tag, title, description, gradient, link_type, link_id, link_url, sort_order } = req.body
+  const { tag, title, description, gradient, cover_url, link_type, link_id, link_url, sort_order } = req.body
   try {
     await db.query(
-      'UPDATE banners SET tag=?, title=?, description=?, gradient=?, link_type=?, link_id=?, link_url=?, sort_order=? WHERE id=?',
-      [tag||'', title, description||'', gradient||'', link_type||'none', link_id||null, link_url||'', sort_order||0, req.params.id]
+      'UPDATE banners SET tag=?, title=?, description=?, gradient=?, cover_url=?, link_type=?, link_id=?, link_url=?, sort_order=? WHERE id=?',
+      [tag||'', title, description||'', gradient||'', cover_url||null, link_type||'none', link_id||null, link_url||'', sort_order||0, req.params.id]
     )
     res.json({ code: 0, msg: '更新成功' })
   } catch(e) { res.json({ code: 500, msg: e.message }) }
