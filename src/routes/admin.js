@@ -90,7 +90,22 @@ router.patch('/activities/:id/status', async (req, res) => {
 })
 
 // ---- 报告 CRUD ----
-router.get('/reports', listQuery('reports'))
+router.get('/reports', async (req, res) => {
+  const { page = 1, size = 20, keyword } = req.query
+  const offset = (page - 1) * size
+  let where = keyword ? 'WHERE r.title LIKE ?' : ''
+  const params = keyword ? [`%${keyword}%`] : []
+  try {
+    const [list] = await db.query(
+      `SELECT r.*,
+        (SELECT COUNT(*) FROM user_downloads d WHERE d.target_type='report' AND d.target_id=r.id) AS download_count
+       FROM reports r ${where} ORDER BY r.id DESC LIMIT ? OFFSET ?`,
+      [...params, Number(size), offset]
+    )
+    const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM reports r ${where}`, params)
+    res.json({ code: 0, data: { list, total } })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
 router.post('/reports', async (req, res) => {
   const { title, source, industry, region, year, is_free, price, summary, content, file_url, gradient } = req.body
   if (!title) return res.json({ code: 400, msg: '标题必填' })
@@ -124,10 +139,16 @@ router.get('/materials', async (req, res) => {
   const offset = (page - 1) * size
   let where = ''
   const params = []
-  if (content_type) { where = 'WHERE content_type = ?'; params.push(content_type) }
+  if (content_type) { where = 'WHERE m.content_type = ?'; params.push(content_type) }
   try {
-    const [list] = await db.query(`SELECT * FROM materials ${where} ORDER BY id DESC LIMIT ? OFFSET ?`, [...params, Number(size), offset])
-    const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM materials ${where}`, params)
+    const [list] = await db.query(
+      `SELECT m.*,
+        (SELECT COUNT(*) FROM user_events e WHERE e.target_type='material' AND e.target_id=m.id AND e.event_type='view') AS view_count,
+        (SELECT COUNT(*) FROM user_downloads d WHERE d.target_type='material' AND d.target_id=m.id) AS download_count
+       FROM materials m ${where} ORDER BY m.id DESC LIMIT ? OFFSET ?`,
+      [...params, Number(size), offset]
+    )
+    const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM materials m ${where}`, params)
     res.json({ code: 0, data: { list, total } })
   } catch(e) { res.json({ code: 500, msg: e.message }) }
 })

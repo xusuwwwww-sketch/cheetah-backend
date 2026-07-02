@@ -27,6 +27,9 @@
       <el-table-column prop="title" label="标题" show-overflow-tooltip />
       <el-table-column prop="author" label="作者" width="100" />
       <el-table-column prop="file_size" label="大小" width="90" v-if="activeTab !== 'case'" />
+      <el-table-column label="下载量" width="75" v-if="activeTab !== 'case'">
+        <template #default="{row}"><span style="color:#2563eb;font-weight:600">{{ row.download_count || 0 }}</span></template>
+      </el-table-column>
       <el-table-column label="状态" width="80">
         <template #default="{row}">
           <el-tag :type="Number(row.status) ? 'success' : 'info'" size="small">{{ Number(row.status) ? '已发布' : '下架' }}</el-tag>
