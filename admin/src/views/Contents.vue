@@ -67,6 +67,19 @@
         <el-form-item label="简介"><el-input v-model="form.summary" type="textarea" :rows="2" /></el-form-item>
 
         <!-- 报告/资料库：文件上传 -->
+        <!-- 报告专属字段 -->
+        <template v-if="activeTab === 'report'">
+          <el-form-item label="来源"><el-input v-model="form.source" placeholder="如：猎豹研究院、eMarketer" /></el-form-item>
+          <el-form-item label="年份"><el-input v-model="form.year" placeholder="如：2026" style="width:120px" /></el-form-item>
+          <el-form-item label="是否免费">
+            <el-switch v-model="form.is_free" :active-value="1" :inactive-value="0" active-text="免费" inactive-text="付费" />
+          </el-form-item>
+          <el-form-item label="价格" v-if="!form.is_free">
+            <el-input-number v-model="form.price" :min="0" :precision="2" />
+          </el-form-item>
+        </template>
+
+        <!-- 报告/资料库：文件上传 -->
         <template v-if="activeTab !== 'case'">
           <el-form-item label="PDF文件">
             <div style="display:flex;flex-direction:column;gap:8px;width:100%">
@@ -113,7 +126,12 @@ const tabLabel = computed(() => ({ report: '报告', case: '案例', material: '
 const loadData = async (page = currentPage.value) => {
   loading.value = true
   try {
-    const res = await axios.get(`/api/materials?content_type=${activeTab.value}&page=${page}&size=20`)
+    let res
+    if (activeTab.value === 'report') {
+      res = await axios.get(`/api/admin/reports?page=${page}&size=20`)
+    } else {
+      res = await axios.get(`/api/materials?content_type=${activeTab.value}&page=${page}&size=20`)
+    }
     list.value = res.data.data?.list || []
     total.value = res.data.data?.total || 0
   } finally { loading.value = false }
@@ -141,11 +159,13 @@ const onUploadFile = (res) => {
 const save = async () => {
   if (!form.value.title) return ElMessage.warning('请填写标题')
   try {
-    const payload = { ...form.value, content_type: activeTab.value }
+    const isReport = activeTab.value === 'report'
+    const apiBase = isReport ? '/api/admin/reports' : '/api/admin/materials'
+    const payload = isReport ? form.value : { ...form.value, content_type: activeTab.value }
     if (form.value.id) {
-      await axios.put(`/api/admin/materials/${form.value.id}`, payload)
+      await axios.put(`${apiBase}/${form.value.id}`, payload)
     } else {
-      await axios.post('/api/admin/materials', payload)
+      await axios.post(apiBase, payload)
     }
     ElMessage.success('保存成功')
     dialogVisible.value = false
@@ -154,7 +174,8 @@ const save = async () => {
 }
 
 const toggleStatus = async (row) => {
-  await axios.patch(`/api/admin/materials/${row.id}/status`, { status: Number(row.status) ? 0 : 1 })
+  const apiBase = activeTab.value === 'report' ? '/api/admin/reports' : '/api/admin/materials'
+  await axios.patch(`${apiBase}/${row.id}/status`, { status: Number(row.status) ? 0 : 1 })
   ElMessage.success('操作成功'); loadData()
 }
 
