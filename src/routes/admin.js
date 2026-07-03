@@ -311,3 +311,30 @@ router.patch('/popups/:id/status', async (req, res) => {
   await db.query('UPDATE popups SET status=? WHERE id=?', [req.body.status, req.params.id])
   res.json({ code: 0, msg: '操作成功' })
 })
+
+// ---- 社群管理 ----
+router.get('/communities', async (req, res) => {
+  const [list] = await db.query('SELECT * FROM communities ORDER BY sort_order ASC, id ASC')
+  res.json({ code: 0, data: list })
+})
+router.post('/communities', async (req, res) => {
+  const { title, description, qr_url, icon_color, sort_order } = req.body
+  if (!title) return res.json({ code: 400, msg: '名称必填' })
+  try {
+    await db.query('INSERT INTO communities (title, description, qr_url, icon_color, sort_order, status) VALUES (?,?,?,?,?,1)',
+      [title, description||'', qr_url||null, icon_color||'#fff0ea', sort_order||0])
+    res.json({ code: 0, msg: '创建成功' })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
+router.put('/communities/:id', async (req, res) => {
+  const { title, description, qr_url, icon_color, sort_order } = req.body
+  try {
+    await db.query('UPDATE communities SET title=?, description=?, qr_url=?, icon_color=?, sort_order=? WHERE id=?',
+      [title, description||'', qr_url||null, icon_color||'#fff0ea', sort_order||0, req.params.id])
+    res.json({ code: 0, msg: '更新成功' })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
+router.patch('/communities/:id/status', async (req, res) => {
+  await db.query('UPDATE communities SET status=? WHERE id=?', [req.body.status, req.params.id])
+  res.json({ code: 0, msg: '操作成功' })
+})
