@@ -67,7 +67,7 @@ exports.login = async (req, res) => {
 // 更新基础信息（第二层留资）
 exports.updateBasic = async (req, res) => {
   const { name, industry, position, email, phone } = req.body
-  if (!name || !industry || !position || !email) {
+  if (!name || !industry) {
     return res.json({ code: 400, msg: '请填写完整信息' })
   }
   try {
