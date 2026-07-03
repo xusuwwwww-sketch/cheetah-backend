@@ -97,7 +97,9 @@
 
         <!-- 案例库：图文内容 -->
         <template v-if="activeTab === 'case'">
-          <el-form-item label="案例正文"><el-input v-model="form.content" type="textarea" :rows="6" placeholder="案例图文内容（支持换行）" /></el-form-item>
+          <el-form-item label="案例正文">
+            <div id="quill-editor" style="border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;width:100%;min-height:300px;"></div>
+          </el-form-item>
         </template>
 
         <el-form-item label="排序">
@@ -114,15 +116,65 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
 
 const list = ref([]), total = ref(0), loading = ref(false)
 const dialogVisible = ref(false), currentPage = ref(1)
 const activeTab = ref('report')
 const form = ref({})
 const uploading = ref(false), uploadingFile = ref(false)
+
+// Quill 富文本
+let quillInstance = null
+const initQuill = () => {
+  nextTick(() => {
+    const el = document.getElementById('quill-editor')
+    if (!el || quillInstance) return
+    quillInstance = new Quill(el, {
+      theme: 'snow',
+      placeholder: '请输入案例内容，支持插入图片...',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'],
+          [{ 'header': [1, 2, 3, false] }],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['link', 'image'],
+          ['clean']
+        ],
+        // 自定义图片上传
+        clipboard: { matchVisual: false }
+      }
+    })
+    // 图片上传处理
+    quillInstance.getModule('toolbar').addHandler('image', () => {
+      const input = document.createElement('input')
+      input.setAttribute('type', 'file')
+      input.setAttribute('accept', 'image/*')
+      input.click()
+      input.onchange = async () => {
+        const file = input.files[0]
+        if (!file) return
+        const formData = new FormData()
+        formData.append('file', file)
+        try {
+          const res = await axios.post('/api/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+          if (res.data.code === 0) {
+            const range = quillInstance.getSelection()
+            quillInstance.insertEmbed(range ? range.index : 0, 'image', res.data.data.url)
+          } else { ElMessage.error('图片上传失败') }
+        } catch (e) { ElMessage.error('上传异常') }
+      }
+    })
+    // 同步内容到 form.content
+    quillInstance.on('text-change', () => {
+      form.value.content = quillInstance.root.innerHTML
+    })
+  })
+}
 
 const tabLabel = computed(() => ({ report: '报告', case: '案例', material: '资料' }[activeTab.value] || '内容'))
 
@@ -146,6 +198,15 @@ const onPageChange = (page) => { currentPage.value = page; loadData(page) }
 const openDialog = (row = {}) => {
   form.value = { content_type: activeTab.value, sort_order: 0, ...row }
   dialogVisible.value = true
+  if (activeTab.value === 'case') {
+    quillInstance = null // 每次重新创建
+    initQuill()
+    nextTick(() => {
+      if (quillInstance && row.content) {
+        quillInstance.root.innerHTML = row.content
+      }
+    })
+  }
 }
 
 const onUploadCover = (res) => {
@@ -183,4 +244,5 @@ const toggleStatus = async (row) => {
 }
 
 onMounted(() => loadData())
+onBeforeUnmount(() => { if (quillInstance) { quillInstance = null } })
 </script>
