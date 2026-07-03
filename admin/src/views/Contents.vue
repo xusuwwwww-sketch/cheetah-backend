@@ -98,7 +98,10 @@
         <!-- 案例库：图文内容 -->
         <template v-if="activeTab === 'case'">
           <el-form-item label="案例正文">
-            <div id="quill-editor" style="border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;width:100%;min-height:300px;"></div>
+            <div style="width:100%">
+              <div id="quill-toolbar" style="border:1px solid #e5e7eb;border-radius:6px 6px 0 0;overflow:hidden;"></div>
+              <div id="quill-editor" style="border:1px solid #e5e7eb;border-top:none;border-radius:0 0 6px 6px;height:280px;overflow-y:auto;"></div>
+            </div>
           </el-form-item>
         </template>
 
@@ -138,14 +141,15 @@ const initQuill = () => {
       theme: 'snow',
       placeholder: '请输入案例内容，支持插入图片...',
       modules: {
-        toolbar: [
-          ['bold', 'italic', 'underline'],
-          [{ 'header': [1, 2, 3, false] }],
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          ['link', 'image'],
-          ['clean']
-        ],
-        // 自定义图片上传
+        toolbar: {
+          container: [
+            ['bold', 'italic', 'underline'],
+            [{ 'header': [1, 2, 3, false] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'image'],
+            ['clean']
+          ]
+        },
         clipboard: { matchVisual: false }
       }
     })
