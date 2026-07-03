@@ -43,13 +43,13 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="180">
         <template #default="{row}">
-          <el-button size="small" @click="openDialog(row)">编辑</el-button>
-          <el-button size="small" :type="row.status === 1 ? 'warning' : 'success'" @click="toggleStatus(row)">
-            {{ row.status === 1 ? '下架' : '上架' }}
-          </el-button>
-          <el-button size="small" type="danger" plain @click="deleteRow(row)">删除</el-button>
+          <div style="display:flex;gap:4px;flex-wrap:nowrap;align-items:center;">
+            <el-button size="small" @click="openDialog(row)">编辑</el-button>
+            <el-button size="small" :type="row.status === 1 ? 'warning' : 'success'" @click="toggleStatus(row)">{{ row.status === 1 ? '下架' : '上架' }}</el-button>
+            <el-button size="small" type="danger" plain @click="deleteRow(row)">删除</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
