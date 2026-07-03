@@ -72,9 +72,21 @@
           </div>
         </el-form-item>
 
-        <el-form-item label="渐变色（无图时用）">
-          <el-input v-model="form.gradient" placeholder="linear-gradient(135deg, #ff6b35, #ff9a5c)" />
-          <div v-if="!form.cover_url && form.gradient" :style="{background: form.gradient, height:'32px', borderRadius:'6px', marginTop:'6px'}"></div>
+                <el-form-item label="渐变色">
+          <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <div @click="form.gradient='linear-gradient(135deg, #ff6b35, #ff9a5c)'" :style="{width:'32px',height:'24px',borderRadius:'4px',background:'linear-gradient(135deg, #ff6b35, #ff9a5c)',cursor:'pointer',border:form.gradient==='linear-gradient(135deg, #ff6b35, #ff9a5c)'?'2px solid #409eff':'2px solid transparent'}" title="linear-gradient(135deg, #ff6b35, #ff9a5c)"></div>
+              <div @click="form.gradient='linear-gradient(135deg, #2563eb, #60a5fa)'" :style="{width:'32px',height:'24px',borderRadius:'4px',background:'linear-gradient(135deg, #2563eb, #60a5fa)',cursor:'pointer',border:form.gradient==='linear-gradient(135deg, #2563eb, #60a5fa)'?'2px solid #409eff':'2px solid transparent'}" title="linear-gradient(135deg, #2563eb, #60a5fa)"></div>
+              <div @click="form.gradient='linear-gradient(135deg, #059669, #34d399)'" :style="{width:'32px',height:'24px',borderRadius:'4px',background:'linear-gradient(135deg, #059669, #34d399)',cursor:'pointer',border:form.gradient==='linear-gradient(135deg, #059669, #34d399)'?'2px solid #409eff':'2px solid transparent'}" title="linear-gradient(135deg, #059669, #34d399)"></div>
+              <div @click="form.gradient='linear-gradient(135deg, #7c3aed, #a78bfa)'" :style="{width:'32px',height:'24px',borderRadius:'4px',background:'linear-gradient(135deg, #7c3aed, #a78bfa)',cursor:'pointer',border:form.gradient==='linear-gradient(135deg, #7c3aed, #a78bfa)'?'2px solid #409eff':'2px solid transparent'}" title="linear-gradient(135deg, #7c3aed, #a78bfa)"></div>
+              <div @click="form.gradient='linear-gradient(135deg, #d97706, #fbbf24)'" :style="{width:'32px',height:'24px',borderRadius:'4px',background:'linear-gradient(135deg, #d97706, #fbbf24)',cursor:'pointer',border:form.gradient==='linear-gradient(135deg, #d97706, #fbbf24)'?'2px solid #409eff':'2px solid transparent'}" title="linear-gradient(135deg, #d97706, #fbbf24)"></div>
+              <div @click="form.gradient='linear-gradient(135deg, #ef4444, #f87171)'" :style="{width:'32px',height:'24px',borderRadius:'4px',background:'linear-gradient(135deg, #ef4444, #f87171)',cursor:'pointer',border:form.gradient==='linear-gradient(135deg, #ef4444, #f87171)'?'2px solid #409eff':'2px solid transparent'}" title="linear-gradient(135deg, #ef4444, #f87171)"></div>
+              <div @click="form.gradient='linear-gradient(135deg, #1a1a2e, #3f3f5a)'" :style="{width:'32px',height:'24px',borderRadius:'4px',background:'linear-gradient(135deg, #1a1a2e, #3f3f5a)',cursor:'pointer',border:form.gradient==='linear-gradient(135deg, #1a1a2e, #3f3f5a)'?'2px solid #409eff':'2px solid transparent'}" title="linear-gradient(135deg, #1a1a2e, #3f3f5a)"></div>
+              <div @click="form.gradient='linear-gradient(135deg, #0f766e, #14b8a6)'" :style="{width:'32px',height:'24px',borderRadius:'4px',background:'linear-gradient(135deg, #0f766e, #14b8a6)',cursor:'pointer',border:form.gradient==='linear-gradient(135deg, #0f766e, #14b8a6)'?'2px solid #409eff':'2px solid transparent'}" title="linear-gradient(135deg, #0f766e, #14b8a6)"></div>
+            </div>
+            <el-input v-model="form.gradient" placeholder="或手动输入 linear-gradient(...)" size="small" />
+            <div v-if="!form.cover_url && form.gradient" :style="{background: form.gradient, height:'28px', borderRadius:'6px'}"></div>
+          </div>
         </el-form-item>
 
         <el-form-item label="跳转类型">
