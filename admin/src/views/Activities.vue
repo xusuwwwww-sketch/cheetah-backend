@@ -36,12 +36,13 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="210">
+      <el-table-column label="操作" width="270">
         <template #default="{row}">
           <el-button size="small" @click="openDialog(row)">编辑</el-button>
           <el-button size="small" :type="row.status === 1 ? 'warning' : 'success'" @click="toggleStatus(row)">
             {{ row.status === 1 ? '下架' : '上架' }}
           </el-button>
+          <el-button size="small" type="primary" plain @click="viewSignups(row)">报名名单</el-button>
           <el-button size="small" type="danger" @click="deleteRow(row)">删除</el-button>
         </template>
       </el-table-column>
@@ -109,6 +110,25 @@
         <el-button type="primary" @click="save">保存</el-button>
       </template>
     </el-dialog>
+
+    <!-- 报名名单弹窗 -->
+    <el-dialog v-model="signupDialog" :title="`报名名单 - ${currentActivity?.title || ''}`" width="700px" :z-index="2000" append-to-body>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:13px;color:#666">共 {{ signupList.length }} 人报名 / 限额 {{ currentActivity?.quota || '不限' }}</span>
+        <el-button size="small" @click="exportSignups">导出名单</el-button>
+      </div>
+      <el-table :data="signupList" stripe v-loading="signupLoading" max-height="400">
+        <el-table-column label="#" width="50" type="index" />
+        <el-table-column prop="name" label="姓名" width="100" />
+        <el-table-column prop="phone" label="手机号" width="140" />
+        <el-table-column prop="company" label="公司" show-overflow-tooltip />
+        <el-table-column prop="industry" label="行业" width="110" />
+        <el-table-column prop="signup_time" label="报名时间" width="160">
+          <template #default="{row}">{{ row.signup_time?.replace('T',' ').substring(0,16) }}</template>
+        </el-table-column>
+      </el-table>
+      <div v-if="!signupList.length && !signupLoading" style="text-align:center;color:#9ca3af;padding:40px">暂无报名记录</div>
+    </el-dialog>
   </div>
 </template>
 <script setup>
@@ -117,6 +137,7 @@ import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 const list = ref([]), total = ref(0), loading = ref(false), dialogVisible = ref(false), uploading = ref(false)
 const currentPage = ref(1)
+const signupDialog = ref(false), signupList = ref([]), signupLoading = ref(false), currentActivity = ref(null)
 const typeMap = { live: '直播', salon: '沙龙', closed: '闭门会', camp: '训练营' }
 const statusMap = { 0: '下架', 1: '报名中', 2: '已结束' }
 const form = ref({})
@@ -157,6 +178,27 @@ const deleteRow = async (row) => {
     await axios.delete(`/api/admin/activities/${row.id}`)
     ElMessage.success('已删除'); loadData()
   } catch (e) { if (e !== 'cancel') ElMessage.error('删除失败') }
+}
+const viewSignups = async (row) => {
+  currentActivity.value = row
+  signupDialog.value = true
+  signupLoading.value = true
+  signupList.value = []
+  try {
+    const res = await axios.get(`/api/admin/activities/${row.id}/signups`)
+    signupList.value = res.data.data || []
+  } catch(e) { ElMessage.error('获取失败') } finally { signupLoading.value = false }
+}
+const exportSignups = () => {
+  if (!signupList.value.length) return ElMessage.warning('暂无报名数据')
+  const headers = ['姓名', '手机号', '公司', '行业', '报名时间']
+  const rows = signupList.value.map(r => [r.name, r.phone, r.company, r.industry, r.signup_time?.substring(0,16)])
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n')
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = `报名名单_${currentActivity.value?.title || ''}.csv`; a.click()
+  URL.revokeObjectURL(url)
 }
 const onUploadSuccess = (res) => {
   uploading.value = false

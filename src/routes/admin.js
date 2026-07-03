@@ -359,3 +359,28 @@ router.delete('/activities/:id', async (req, res) => {
   await db.query('DELETE FROM activities WHERE id=?', [req.params.id])
   res.json({ code: 0, msg: '删除成功' })
 })
+
+// ---- 活动报名名单 ----
+router.get('/activities/:id/signups', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT s.created_at AS signup_time, u.id AS user_id,
+              p.name, p.phone, p.company, p.industry, p.position,
+              u.nickname
+       FROM activity_signups s
+       JOIN users u ON u.id = s.user_id
+       LEFT JOIN user_profiles p ON p.user_id = s.user_id
+       WHERE s.activity_id = ? AND s.status = 1
+       ORDER BY s.created_at ASC`,
+      [req.params.id]
+    )
+    res.json({ code: 0, data: rows.map(r => ({
+      name: r.name || r.nickname || '未填写',
+      phone: r.phone || '-',
+      company: r.company || '-',
+      industry: r.industry || '-',
+      position: r.position || '-',
+      signup_time: r.signup_time
+    })) })
+  } catch(e) { res.json({ code: 500, msg: e.message }) }
+})
