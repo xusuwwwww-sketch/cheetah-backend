@@ -36,20 +36,20 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="200">
+      <el-table-column label="报名名单" width="120">
         <template #default="{row}">
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <div style="display:flex;gap:4px;">
-              <el-button size="small" @click="openDialog(row)">编辑</el-button>
-              <el-button size="small" :type="row.status === 1 ? 'warning' : 'success'" @click="toggleStatus(row)">
-                {{ row.status === 1 ? '下架' : '上架' }}
-              </el-button>
-              <el-button size="small" type="danger" plain @click="deleteRow(row)">删除</el-button>
-            </div>
-            <el-button size="small" type="primary" plain @click="viewSignups(row)" style="width:100%">
-              📋 报名名单 ({{ row.signup_count || 0 }})
-            </el-button>
-          </div>
+          <el-button size="small" type="primary" plain @click="viewSignups(row)">
+            查看 ({{ row.signup_count || 0 }})
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="160">
+        <template #default="{row}">
+          <el-button size="small" @click="openDialog(row)">编辑</el-button>
+          <el-button size="small" :type="row.status === 1 ? 'warning' : 'success'" @click="toggleStatus(row)">
+            {{ row.status === 1 ? '下架' : '上架' }}
+          </el-button>
+          <el-button size="small" type="danger" plain @click="deleteRow(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
