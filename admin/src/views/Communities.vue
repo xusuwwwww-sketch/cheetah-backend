@@ -15,7 +15,7 @@
             </div>
             <div>
               <div style="font-size:14px;font-weight:600;color:#1a1a2e">{{ row.title }}</div>
-              <div style="font-size:12px;color:#9ca3af">{{ row.description }}</div>
+              <div style="font-size:12px;color:#9ca3af" v-if="row.description && !row.description.includes('人')">{{ row.description }}</div>
             </div>
           </div>
         </template>

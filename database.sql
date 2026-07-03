@@ -311,11 +311,11 @@ INSERT INTO banners (tag, title, description, gradient, sort_order) VALUES
 ('新品上线', 'CheetahGo 3.0 正式发布', 'AI驱动的广告投放 · 效率提升300%', 'linear-gradient(135deg, #2563eb, #60a5fa)', 3);
 
 INSERT INTO communities (title, description, icon_color, sort_order) VALUES
-('出海交流群', '1280人已加入', '#fff0ea', 1),
-('买量优化群', '856人已加入',  '#ebf5ff', 2),
-('电商出海群', '1032人已加入', '#ecfdf5', 3),
-('游戏出海群', '643人已加入',  '#f5f3ff', 4),
-('合规交流群', '421人已加入',  '#fffbeb', 5);
+('出海交流群', '跨境出海综合交流', '#fff0ea', 1),
+('买量优化群', 'Facebook/TikTok买量实操', '#ebf5ff', 2),
+('电商出海群', '独立站&平台电商交流', '#ecfdf5', 3),
+('游戏出海群', '海外游戏发行&运营', '#f5f3ff', 4),
+('合规交流群', '出海法务&合规讨论', '#fffbeb', 5);
 
 -- ============================================================
 -- 启动弹窗表
