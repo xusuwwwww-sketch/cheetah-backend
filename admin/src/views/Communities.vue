@@ -15,7 +15,7 @@
             </div>
             <div>
               <div style="font-size:14px;font-weight:600;color:#1a1a2e">{{ row.title }}</div>
-              <div style="font-size:12px;color:#9ca3af" v-if="row.description && !row.description.includes('人')">{{ row.description }}</div>
+              <div style="font-size:12px;color:#9ca3af" v-if="row.description">{{ row.description }}</div>
             </div>
           </div>
         </template>
@@ -27,17 +27,10 @@
         </template>
       </el-table-column>
       <el-table-column prop="sort_order" label="排序" width="70" />
-      <el-table-column label="状态" width="80">
-        <template #default="{row}">
-          <el-tag :type="Number(row.status) ? 'success' : 'info'" size="small">{{ Number(row.status) ? '显示' : '隐藏' }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="120">
         <template #default="{row}">
           <el-button size="small" @click="openDialog(row)">编辑</el-button>
-          <el-button size="small" :type="Number(row.status) ? 'warning' : 'success'" @click="toggleStatus(row)">
-            {{ Number(row.status) ? '隐藏' : '显示' }}
-          </el-button>
+          <el-button size="small" type="danger" @click="deleteRow(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -81,7 +74,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const list = ref([]), loading = ref(false), dialogVisible = ref(false), uploading = ref(false)
 const form = ref({})
@@ -115,6 +108,13 @@ const save = async () => {
   } catch (e) { ElMessage.error('保存失败') }
 }
 
+const deleteRow = async (row) => {
+  try {
+    await ElMessageBox.confirm('确定删除该社群吗？', '确认', { type: 'warning' })
+    await axios.delete(`/api/admin/communities/${row.id}`)
+    ElMessage.success('已删除'); loadData()
+  } catch(e) { if (e !== 'cancel') ElMessage.error('删除失败') }
+}
 const toggleStatus = async (row) => {
   await axios.patch(`/api/admin/communities/${row.id}/status`, { status: Number(row.status) ? 0 : 1 })
   ElMessage.success('操作成功'); loadData()

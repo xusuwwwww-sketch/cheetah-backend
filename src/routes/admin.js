@@ -338,3 +338,7 @@ router.patch('/communities/:id/status', async (req, res) => {
   await db.query('UPDATE communities SET status=? WHERE id=?', [req.body.status, req.params.id])
   res.json({ code: 0, msg: '操作成功' })
 })
+router.delete('/communities/:id', async (req, res) => {
+  await db.query('DELETE FROM communities WHERE id=?', [req.params.id])
+  res.json({ code: 0, msg: '删除成功' })
+})
