@@ -209,12 +209,23 @@ const openDialog = (row = {}) => {
   form.value = { content_type: activeTab.value, sort_order: 0, ...row }
   dialogVisible.value = true
   if (activeTab.value === 'case') {
-    quillInstance = null // 每次重新创建
-    initQuill()
+    // 先清除旧实例的 DOM，再重新初始化
+    if (quillInstance) {
+      quillInstance.off('text-change')
+      quillInstance = null
+      // 清空容器 DOM
+      nextTick(() => {
+        const el = document.getElementById('quill-editor')
+        if (el) el.innerHTML = ''
+      })
+    }
     nextTick(() => {
-      if (quillInstance && row.content) {
-        quillInstance.root.innerHTML = row.content
-      }
+      initQuill()
+      nextTick(() => {
+        if (quillInstance && row.content) {
+          quillInstance.root.innerHTML = row.content
+        }
+      })
     })
   }
 }
