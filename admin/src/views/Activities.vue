@@ -110,6 +110,10 @@
         <el-form-item label="限额"><el-input-number v-model="form.quota" :min="0" placeholder="0=不限" /></el-form-item>
         <el-form-item label="主办方"><el-input v-model="form.organizer" /></el-form-item>
         <el-form-item label="详情"><el-input v-model="form.description" type="textarea" :rows="4" /></el-form-item>
+        <el-form-item label="排序">
+          <el-input-number v-model="form.sort_order" :min="0" />
+          <span style="font-size:12px;color:#999;margin-left:8px">数字越大越靠前显示</span>
+        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible=false">取消</el-button>
@@ -163,7 +167,7 @@ const onPageChange = (page) => {
 }
 
 const openDialog = (row = {}) => {
-  form.value = { ...row, type_slug: row.type_slug || 'live', quota: row.quota || 0 }
+  form.value = { ...row, type_slug: row.type_slug || 'live', quota: row.quota || 0, sort_order: row.sort_order || 0 }
   dialogVisible.value = true
 }
 const save = async () => {
