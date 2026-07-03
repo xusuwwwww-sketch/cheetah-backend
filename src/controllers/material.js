@@ -1,5 +1,15 @@
 const db = require('../config/db')
 
+// 资料分类列表
+exports.categories = async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM material_categories ORDER BY sort_order ASC')
+    res.json({ code: 0, msg: 'success', data: rows })
+  } catch (err) {
+    res.json({ code: 500, msg: '获取失败', detail: err.message })
+  }
+}
+
 // 内容列表（报告/案例/资料通用）
 exports.list = async (req, res) => {
   const { content_type, page = 1, size = 20 } = req.query
