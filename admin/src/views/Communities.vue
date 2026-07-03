@@ -7,7 +7,7 @@
 
     <el-table :data="list" stripe v-loading="loading">
       <el-table-column label="序号" width="60" type="index" />
-      <el-table-column label="社群" width="200">
+      <el-table-column label="社群" min-width="200">
         <template #default="{row}">
           <div style="display:flex;align-items:center;gap:10px">
             <div :style="{width:'36px',height:'36px',borderRadius:'10px',background:row.icon_color||'#fff0ea',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'18px'}">
