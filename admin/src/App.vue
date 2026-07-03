@@ -24,7 +24,7 @@ const menus = [
   { path: '/dashboard', title: '数据概览', icon: 'DataLine' },
   { path: '/activities', title: '活动管理', icon: 'Calendar' },
   { path: '/contents', title: '内容管理', icon: 'Files' },
-  { path: '/users', title: '用户管理', icon: 'User' },
+  { path: '/users', title: '留资管理', icon: 'User' },
   { path: '/communities', title: '社群管理', icon: 'ChatDotSquare' },
   { path: '/banners', title: '轮播图配置', icon: 'Picture' },
   { path: '/popups', title: '启动弹窗', icon: 'Bell' },
