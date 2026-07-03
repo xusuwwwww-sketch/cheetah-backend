@@ -27,7 +27,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="sort_order" label="排序" width="70" />
-      <el-table-column label="操作" width="120">
+      <el-table-column label="操作" width="160">
         <template #default="{row}">
           <el-button size="small" @click="openDialog(row)">编辑</el-button>
           <el-button size="small" type="danger" @click="deleteRow(row)">删除</el-button>
