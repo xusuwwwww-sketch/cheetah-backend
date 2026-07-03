@@ -176,7 +176,12 @@ const initQuill = () => {
     })
     // 同步内容到 form.content
     quillInstance.on('text-change', () => {
-      form.value.content = quillInstance.root.innerHTML
+      // 清除图片内联 width/height，让小程序 max-width:100% 生效
+      let html = quillInstance.root.innerHTML
+      html = html.replace(/<img([^>]*)\sstyle="[^"]*"([^>]*)>/gi, '<img$1$2>')
+      html = html.replace(/<img([^>]*)\swidth="[^"]*"([^>]*)>/gi, '<img$1$2>')
+      html = html.replace(/<img([^>]*)\sheight="[^"]*"([^>]*)>/gi, '<img$1$2>')
+      form.value.content = html
     })
   })
 }
