@@ -42,8 +42,11 @@ app.use((err, req, res, next) => {
 })
 
 const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`✅ 猎豹出海工具箱 API 已启动：http://localhost:${PORT}`)
-})
+// 测试环境不启动 listen（jest 用 supertest 直接调 app）
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`✅ 猎豹出海工具箱 API 已启动：http://localhost:${PORT}`)
+  })
+}
 
 module.exports = app
