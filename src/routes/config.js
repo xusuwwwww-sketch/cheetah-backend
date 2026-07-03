@@ -30,3 +30,17 @@ router.get('/popup', async (req, res) => {
     }
   } catch(e) { res.json({ code: 500, msg: e.message }) }
 })
+
+// 阅读埋点（前端调用）
+router.post('/track', optAuth, async (req, res) => {
+  const db = require('../config/db')
+  const { target_type, target_id } = req.body
+  if (!target_type || !target_id) return res.json({ code: 400, msg: '参数缺失' })
+  try {
+    await db.query(
+      'INSERT INTO user_events (user_id, event_type, target_type, target_id) VALUES (?,?,?,?)',
+      [req.user?.id || null, 'view', target_type, target_id]
+    )
+    res.json({ code: 0, msg: 'ok' })
+  } catch(e) { res.json({ code: 0, msg: 'ok' }) } // 埋点失败不影响主流程
+})

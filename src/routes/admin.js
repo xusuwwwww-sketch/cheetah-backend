@@ -114,7 +114,9 @@ router.get('/reports', async (req, res) => {
   try {
     const [list] = await db.query(
       `SELECT r.*,
-        (SELECT COUNT(*) FROM user_downloads d WHERE d.target_type='report' AND d.target_id=r.id) AS download_count
+        (SELECT COUNT(*) FROM user_downloads d WHERE d.target_type='report' AND d.target_id=r.id) AS download_count,
+        (SELECT COUNT(*) FROM user_events e WHERE e.target_type='report' AND e.target_id=r.id AND e.event_type='view') AS view_count,
+        (SELECT COUNT(*) FROM user_favorites f WHERE f.target_type='report' AND f.target_id=r.id) AS fav_count
        FROM reports r ${where} ORDER BY r.id DESC LIMIT ? OFFSET ?`,
       [...params, Number(size), offset]
     )
@@ -160,7 +162,8 @@ router.get('/materials', async (req, res) => {
     const [list] = await db.query(
       `SELECT m.*,
         (SELECT COUNT(*) FROM user_events e WHERE e.target_type='material' AND e.target_id=m.id AND e.event_type='view') AS view_count,
-        (SELECT COUNT(*) FROM user_downloads d WHERE d.target_type='material' AND d.target_id=m.id) AS download_count
+        (SELECT COUNT(*) FROM user_downloads d WHERE d.target_type='material' AND d.target_id=m.id) AS download_count,
+        (SELECT COUNT(*) FROM user_favorites f WHERE f.target_type='material' AND f.target_id=m.id) AS fav_count
        FROM materials m ${where} ORDER BY m.id DESC LIMIT ? OFFSET ?`,
       [...params, Number(size), offset]
     )

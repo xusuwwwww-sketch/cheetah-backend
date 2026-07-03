@@ -27,8 +27,14 @@
       <el-table-column prop="title" label="标题" show-overflow-tooltip />
       <el-table-column prop="author" label="作者" width="100" />
       <el-table-column prop="file_size" label="大小" width="90" v-if="activeTab !== 'case'" />
-      <el-table-column label="下载量" width="75" v-if="activeTab !== 'case'">
+      <el-table-column label="👁 阅读" width="75">
+        <template #default="{row}"><span style="color:#6b7280;font-weight:600">{{ row.view_count || 0 }}</span></template>
+      </el-table-column>
+      <el-table-column label="⬇ 下载" width="75" v-if="activeTab !== 'case'">
         <template #default="{row}"><span style="color:#2563eb;font-weight:600">{{ row.download_count || 0 }}</span></template>
+      </el-table-column>
+      <el-table-column label="♥ 收藏" width="75">
+        <template #default="{row}"><span style="color:#ef4444;font-weight:600">{{ row.fav_count || 0 }}</span></template>
       </el-table-column>
       <el-table-column label="状态" width="80">
         <template #default="{row}">
