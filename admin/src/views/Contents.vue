@@ -47,7 +47,7 @@
     <el-pagination style="margin-top:16px" :total="total" :page-size="20" :current-page="currentPage" @current-change="onPageChange" layout="total, prev, pager, next" />
 
     <!-- 新增/编辑 Dialog -->
-    <el-dialog v-model="dialogVisible" :title="form.id ? `编辑${tabLabel}` : `新增${tabLabel}`" width="600px">
+    <el-dialog v-model="dialogVisible" :title="form.id ? `编辑${tabLabel}` : `新增${tabLabel}`" width="600px" :z-index="2000" append-to-body>
       <el-form :model="form" label-width="90px">
         <el-form-item label="标题"><el-input v-model="form.title" /></el-form-item>
         <el-form-item label="作者"><el-input v-model="form.author" placeholder="如：猎豹研究院" /></el-form-item>

@@ -54,7 +54,7 @@
       layout="total, prev, pager, next"
     />
 
-    <el-dialog v-model="dialogVisible" :title="form.id ? '编辑活动' : '新增活动'" width="620px">
+    <el-dialog v-model="dialogVisible" :z-index="2000" append-to-body :title="form.id ? '编辑活动' : '新增活动'" width="620px">
       <el-form :model="form" label-width="90px">
         <el-form-item label="标题"><el-input v-model="form.title" /></el-form-item>
         <el-form-item label="类型">

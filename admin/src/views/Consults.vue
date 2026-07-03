@@ -35,7 +35,7 @@
     <el-pagination style="margin-top:16px" :total="total" :page-size="20" :current-page="currentPage" @current-change="onPageChange" layout="total, prev, pager, next" />
 
     <!-- 详情/跟进弹窗 -->
-    <el-dialog v-model="dialogVisible" title="咨询详情" width="580px">
+    <el-dialog v-model="dialogVisible" :z-index="2000" append-to-body title="咨询详情" width="580px">
       <el-descriptions :column="2" border size="small" v-if="current">
         <el-descriptions-item label="姓名">{{ current.name }}</el-descriptions-item>
         <el-descriptions-item label="手机号">{{ current.phone }}</el-descriptions-item>

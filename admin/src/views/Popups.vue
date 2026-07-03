@@ -44,7 +44,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="dialogVisible" :title="form.id ? '编辑弹窗' : '新增弹窗'" width="560px">
+    <el-dialog v-model="dialogVisible" :z-index="2000" append-to-body :title="form.id ? '编辑弹窗' : '新增弹窗'" width="560px">
       <el-form :model="form" label-width="90px">
         <el-form-item label="标题"><el-input v-model="form.title" /></el-form-item>
         <el-form-item label="封面图">

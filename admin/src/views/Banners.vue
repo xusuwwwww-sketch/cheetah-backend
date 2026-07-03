@@ -42,7 +42,7 @@
     <el-pagination style="margin-top:16px" :total="total" :page-size="20" :current-page="currentPage" @current-change="onPageChange" layout="total, prev, pager, next" />
 
     <!-- 新增/编辑 Dialog -->
-    <el-dialog v-model="dialogVisible" :title="form.id ? '编辑轮播图' : '新增轮播图'" width="580px">
+    <el-dialog v-model="dialogVisible" :z-index="2000" append-to-body :title="form.id ? '编辑轮播图' : '新增轮播图'" width="580px">
       <el-form :model="form" label-width="90px">
         <el-form-item label="标题"><el-input v-model="form.title" placeholder="如：2026 出海增长峰会" /></el-form-item>
         <el-form-item label="标签"><el-input v-model="form.tag" placeholder="如：热门活动、限时免费" /></el-form-item>

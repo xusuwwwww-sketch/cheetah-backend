@@ -35,7 +35,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="dialogVisible" :title="form.id ? '编辑社群' : '新增社群'" width="520px">
+    <el-dialog v-model="dialogVisible" :z-index="2000" append-to-body :title="form.id ? '编辑社群' : '新增社群'" width="520px">
       <el-form :model="form" label-width="90px">
         <el-form-item label="社群名称"><el-input v-model="form.title" placeholder="如：出海交流群" /></el-form-item>
         <el-form-item label="描述"><el-input v-model="form.description" placeholder="如：1280人已加入" /></el-form-item>
