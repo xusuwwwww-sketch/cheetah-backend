@@ -2,11 +2,12 @@ const db = require('../config/db')
 
 // 活动列表
 exports.list = async (req, res) => {
-  const { type, keyword, page = 1, size = 20 } = req.query
+  const { type, type_slug, keyword, page = 1, size = 20 } = req.query
+  const typeFilter = type_slug || type  // 兼容两种参数名
   const offset = (page - 1) * size
   let where = 'WHERE a.status != 0'
   const params = []
-  if (type && type !== 'all') { where += ' AND a.type_slug = ?'; params.push(type) }
+  if (typeFilter && typeFilter !== 'all') { where += ' AND a.type_slug = ?'; params.push(typeFilter) }
   if (keyword) { where += ' AND a.title LIKE ?'; params.push(`%${keyword}%`) }
   try {
     const [rows] = await db.query(
