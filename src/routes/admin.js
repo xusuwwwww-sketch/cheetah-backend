@@ -89,13 +89,13 @@ router.post('/activities', async (req, res) => {
   } catch (e) { res.json({ code: 500, msg: e.message }) }
 })
 router.put('/activities/:id', async (req, res) => {
-  const { title, type_slug, start_time, end_time, signup_deadline, location, organizer, quota, description, gradient, cover_url } = req.body
+  const { title, type_slug, start_time, end_time, signup_deadline, location, organizer, quota, description, gradient, cover_url, sort_order } = req.body
   try {
     const fixTime = t => t ? t.replace('T', ' ').substring(0, 19) : null
     await db.query(
       `UPDATE activities SET title=?, type_slug=?, start_time=?, end_time=?, signup_deadline=?,
-       location=?, organizer=?, quota=?, description=?, gradient=?, cover_url=? WHERE id=?`,
-      [title, type_slug, fixTime(start_time), fixTime(end_time), fixTime(signup_deadline), location, organizer, quota || 0, description, gradient, cover_url||null, req.params.id]
+       location=?, organizer=?, quota=?, description=?, gradient=?, cover_url=?, sort_order=? WHERE id=?`,
+      [title, type_slug, fixTime(start_time), fixTime(end_time), fixTime(signup_deadline), location, organizer, quota || 0, description, gradient, cover_url||null, sort_order||0, req.params.id]
     )
     res.json({ code: 0, msg: '更新成功' })
   } catch (e) { res.json({ code: 500, msg: e.message }) }
