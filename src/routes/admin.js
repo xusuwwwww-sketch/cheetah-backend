@@ -342,3 +342,17 @@ router.delete('/communities/:id', async (req, res) => {
   await db.query('DELETE FROM communities WHERE id=?', [req.params.id])
   res.json({ code: 0, msg: '删除成功' })
 })
+
+// ---- 内容删除 ----
+router.delete('/materials/:id', async (req, res) => {
+  await db.query('DELETE FROM materials WHERE id=?', [req.params.id])
+  res.json({ code: 0, msg: '删除成功' })
+})
+router.delete('/reports/:id', async (req, res) => {
+  await db.query('DELETE FROM reports WHERE id=?', [req.params.id])
+  res.json({ code: 0, msg: '删除成功' })
+})
+router.delete('/activities/:id', async (req, res) => {
+  await db.query('DELETE FROM activities WHERE id=?', [req.params.id])
+  res.json({ code: 0, msg: '删除成功' })
+})

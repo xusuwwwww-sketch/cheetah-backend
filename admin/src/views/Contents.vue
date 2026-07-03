@@ -35,12 +35,13 @@
           <el-tag :type="Number(row.status) ? 'success' : 'info'" size="small">{{ Number(row.status) ? '已发布' : '下架' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="210">
         <template #default="{row}">
           <el-button size="small" @click="openDialog(row)">编辑</el-button>
           <el-button size="small" :type="Number(row.status) ? 'warning' : 'success'" @click="toggleStatus(row)">
             {{ Number(row.status) ? '下架' : '上架' }}
           </el-button>
+          <el-button size="small" type="danger" @click="deleteRow(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -121,7 +122,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 
@@ -245,6 +246,14 @@ const toggleStatus = async (row) => {
   const apiBase = activeTab.value === 'report' ? '/api/admin/reports' : '/api/admin/materials'
   await axios.patch(`${apiBase}/${row.id}/status`, { status: Number(row.status) ? 0 : 1 })
   ElMessage.success('操作成功'); loadData()
+}
+const deleteRow = async (row) => {
+  try {
+    await ElMessageBox.confirm('确定永久删除该内容吗？删除后不可恢复！', '确认删除', { type: 'warning', confirmButtonText: '确认删除', cancelButtonText: '取消', confirmButtonClass: 'el-button--danger' })
+    const apiBase = activeTab.value === 'report' ? '/api/admin/reports' : '/api/admin/materials'
+    await axios.delete(`${apiBase}/${row.id}`)
+    ElMessage.success('已删除'); loadData()
+  } catch (e) { if (e !== 'cancel') ElMessage.error('删除失败') }
 }
 
 onMounted(() => loadData())
