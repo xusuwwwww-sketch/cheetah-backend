@@ -182,11 +182,13 @@ const initQuill = () => {
     })
     // 同步内容到 form.content
     quillInstance.on('text-change', () => {
-      // 清除图片内联 width/height，让小程序 max-width:100% 生效
       let html = quillInstance.root.innerHTML
+      // 先清除所有内联尺寸
       html = html.replace(/<img([^>]*)\sstyle="[^"]*"([^>]*)>/gi, '<img$1$2>')
       html = html.replace(/<img([^>]*)\swidth="[^"]*"([^>]*)>/gi, '<img$1$2>')
       html = html.replace(/<img([^>]*)\sheight="[^"]*"([^>]*)>/gi, '<img$1$2>')
+      // 加内联样式（微信小程序rich-text不识别外部CSS，必须内联）
+      html = html.replace(/<img([^>]*)>/gi, '<img$1 style="max-width:100%;height:auto;display:block;">')
       form.value.content = html
     })
   })
