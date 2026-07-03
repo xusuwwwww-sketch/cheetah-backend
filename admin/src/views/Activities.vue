@@ -65,6 +65,11 @@
         </el-form-item>
         <el-form-item label="封面图">
           <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+            <el-alert type="info" :closable="false" style="margin-bottom:4px;">
+              <template #title>
+                <span style="font-size:12px;">推荐尺寸：<strong>750 × 420px</strong>（宽:高 = 16:9），支持 JPG/PNG，建议小于 2MB</span>
+              </template>
+            </el-alert>
             <el-upload action="/api/upload" :show-file-list="false" accept="image/*" :on-success="onUploadSuccess" :on-error="onUploadError" :before-upload="() => { uploading = true; return true }">
               <el-button :loading="uploading" size="small">{{ uploading ? '上传中...' : '点击上传图片' }}</el-button>
             </el-upload>

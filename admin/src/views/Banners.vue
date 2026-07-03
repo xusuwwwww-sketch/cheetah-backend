@@ -50,6 +50,11 @@
 
         <el-form-item label="封面图">
           <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+            <el-alert type="info" :closable="false" style="margin-bottom:4px;">
+              <template #title>
+                <span style="font-size:12px;">推荐尺寸：<strong>750 × 300px</strong>（宽:高 = 5:2），支持 JPG/PNG，建议小于 1MB</span>
+              </template>
+            </el-alert>
             <!-- 上传 -->
             <el-upload
               action="/api/upload"
