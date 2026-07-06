@@ -293,6 +293,8 @@ router.post('/popups', async (req, res) => {
   const { title, cover_url, gradient, description, btn_text, link_type, link_id, link_url, show_once, sort_order, start_time, end_time } = req.body
   if (!title) return res.json({ code: 400, msg: '标题必填' })
   try {
+    // 新建弹窗时自动关闭其他所有弹窗（同一时间只允许一个启用）
+    await db.query('UPDATE popups SET status=0')
     await db.query(
       'INSERT INTO popups (title, cover_url, gradient, description, btn_text, link_type, link_id, link_url, show_once, sort_order, start_time, end_time, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1)',
       [title, cover_url||null, gradient||'', description||'', btn_text||'立即查看', link_type||'none', link_id||null, link_url||'', show_once??1, sort_order||0, start_time||null, end_time||null]
@@ -311,7 +313,12 @@ router.put('/popups/:id', async (req, res) => {
   } catch(e) { res.json({ code: 500, msg: e.message }) }
 })
 router.patch('/popups/:id/status', async (req, res) => {
-  await db.query('UPDATE popups SET status=? WHERE id=?', [req.body.status, req.params.id])
+  const status = req.body.status
+  // 启用某个弹窗时，先关闭其他所有弹窗（同一时间只允许一个启用）
+  if (status == 1) {
+    await db.query('UPDATE popups SET status=0 WHERE id != ?', [req.params.id])
+  }
+  await db.query('UPDATE popups SET status=? WHERE id=?', [status, req.params.id])
   res.json({ code: 0, msg: '操作成功' })
 })
 
