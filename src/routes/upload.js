@@ -19,13 +19,22 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
   fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp/
-    if (allowed.test(file.mimetype)) {
+    const allowedMime = [
+      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ]
+    if (allowedMime.includes(file.mimetype)) {
       cb(null, true)
     } else {
-      cb(new Error('只支持图片格式（jpg/png/gif/webp）'))
+      cb(new Error('不支持的文件格式，支持：图片/PDF/Word/PPT/Excel'))
     }
   }
 })
