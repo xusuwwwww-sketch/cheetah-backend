@@ -87,7 +87,7 @@
             <el-option v-for="(v,k) in linkTypeMap" :key="k" :label="v" :value="k" />
           </el-select>
         </el-form-item>
-        <el-form-item label="关联ID" v-if="['activity','report','material','case'].includes(form.link_type)">
+        <el-form-item :label="linkIdLabel" v-if="['activity','report','material','case'].includes(form.link_type)">
           <el-input-number v-model="form.link_id" :min="1" />
         </el-form-item>
         <el-form-item label="外部链接" v-if="form.link_type === 'url'">
@@ -112,12 +112,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
 const list = ref([]), loading = ref(false), dialogVisible = ref(false), uploading = ref(false)
 const form = ref({})
+
+const linkIdLabel = computed(() => {
+  const map = {
+    activity: '活动 ID',
+    report: '报告 ID',
+    material: '资料 ID',
+    case: '案例 ID',
+  }
+  return map[form.value.link_type] || '关联 ID'
+})
 
 const linkTypeMap = {
   none: '无跳转',
