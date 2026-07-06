@@ -88,7 +88,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="linkIdLabel" v-if="['activity','report','material','case'].includes(form.link_type)">
-          <el-input-number v-model="form.link_id" :min="1" />
+          <el-input v-model="form.link_id" placeholder="留空则跳列表页" style="width:160px" clearable @input="v => form.link_id = v ? parseInt(v)||'' : ''" />
           <div style="color:#999;font-size:12px;margin-top:4px;">不填则跳转到该模块列表页，不跳转具体内容页</div>
         </el-form-item>
         <el-form-item label="外部链接" v-if="form.link_type === 'url'">
