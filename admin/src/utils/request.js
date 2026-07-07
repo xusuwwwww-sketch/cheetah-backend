@@ -13,8 +13,11 @@ request.interceptors.response.use(
   res => res,
   err => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('admin_token')
-      router.push('/login')
+      // 只有不在登录页时才跳转，避免循环
+      if (router.currentRoute.value.path !== '/login') {
+        localStorage.removeItem('admin_token')
+        router.push('/login')
+      }
     }
     return Promise.reject(err)
   }
