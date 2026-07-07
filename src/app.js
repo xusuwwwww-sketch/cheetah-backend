@@ -20,7 +20,8 @@ app.use('/api/reports', require('./routes/report'))
 app.use('/api/materials', require('./routes/material'))
 app.use('/api/consult', require('./routes/consult'))
 app.use('/api/config', require('./routes/config'))
-app.use('/api/admin', require('./routes/admin'))
+app.use('/api/auth', require('./routes/auth'))
+app.use('/api/admin', require('./middleware/auth'), require('./routes/admin'))
 app.use('/api/upload', require('./routes/upload'))
 
 // 静态文件：上传的图片
