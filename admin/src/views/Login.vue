@@ -20,7 +20,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '../utils/request'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()

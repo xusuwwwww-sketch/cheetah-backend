@@ -143,7 +143,7 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '../utils/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
 const list = ref([]), total = ref(0), loading = ref(false), dialogVisible = ref(false), uploading = ref(false)
 const currentPage = ref(1)

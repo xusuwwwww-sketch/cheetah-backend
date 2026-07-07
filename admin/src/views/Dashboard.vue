@@ -30,7 +30,7 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '../utils/request'
 const stats = ref([
   { label: '活动总数', value: 0 },
   { label: '报告总数', value: 0 },

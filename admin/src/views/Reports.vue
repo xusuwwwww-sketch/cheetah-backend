@@ -23,7 +23,7 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '../utils/request'
 const list = ref([]), total = ref(0), loading = ref(false)
 const loadData = async (page = 1) => {
   loading.value = true

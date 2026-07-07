@@ -114,7 +114,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '../utils/request'
 import { ElMessage } from 'element-plus'
 
 const list = ref([]), loading = ref(false), dialogVisible = ref(false), uploading = ref(false)
