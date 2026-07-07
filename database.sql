@@ -158,8 +158,7 @@ CREATE TABLE IF NOT EXISTS materials (
   sort_order INT DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  KEY idx_category (category_id),
-  -- category_id FK removed: optional field
+  KEY idx_category (category_id)
 );
 
 -- ============================================================
