@@ -29,7 +29,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import axios from '../utils/request'
 const stats = ref([
   { label: '活动总数', value: 0 },
@@ -39,6 +39,7 @@ const stats = ref([
 ])
 const recentConsults = ref([])
 onMounted(async () => {
+  await nextTick()
   try {
     const [statsRes, consults] = await Promise.all([
       axios.get('/api/admin/stats'),
