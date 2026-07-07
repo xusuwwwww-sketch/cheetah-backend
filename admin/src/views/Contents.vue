@@ -231,7 +231,7 @@ const onTabChange = () => { currentPage.value = 1; loadData(1) }
 const onPageChange = (page) => { currentPage.value = page; loadData(page) }
 
 const openDialog = (row = {}) => {
-  form.value = { content_type: activeTab.value, sort_order: 0, ...row }
+  form.value = { content_type: activeTab.value, sort_order: 0, is_free: 1, status: 1, ...row }
   dialogVisible.value = true
   if (activeTab.value === 'case') {
     // 先清除旧实例的 DOM，再重新初始化
